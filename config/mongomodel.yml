@@ -1,0 +1,11 @@
+development:
+  database: milky_way
+  host: localhost
+  port: 27018
+
+ production:
+  database: milky_way
+  host: localhost
+  port: 27018
+  username: <%= ENV['MONGO_USERNAME'] %>
+  password: <%= ENV['MONGO_PASSWORD'] %>
