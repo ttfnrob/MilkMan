@@ -34,7 +34,12 @@ GEM
     bson_ext (1.9.2)
       bson (~> 1.9.2)
     builder (3.0.4)
+    dbscan (0.2)
+      distance_measures
+      geocoder
+    distance_measures (0.0.6)
     erubis (2.7.0)
+    geocoder (1.1.9)
     hike (1.2.3)
     i18n (0.6.9)
     journey (1.0.4)
@@ -95,5 +100,6 @@ PLATFORMS
 
 DEPENDENCIES
   bson_ext
+  dbscan
   mongo_mapper
   rails (= 3.2.5)
