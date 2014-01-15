@@ -1,7 +1,5 @@
 require 'csv'
 
-objects = ['galaxy', 'ego', 'cluster']
-
 CSV.open( Rails.root.to_s+"/data/raw/annotations/bubble_raw_"+DateTime.now.to_s(:number)+".csv", 'w') do |bubble_writer|
 CSV.open( Rails.root.to_s+"/data/raw/annotations/galaxy_raw_"+DateTime.now.to_s(:number)+".csv", 'w') do |galaxy_writer|
 CSV.open( Rails.root.to_s+"/data/raw/annotations/ego_raw_"+DateTime.now.to_s(:number)+".csv", 'w') do |ego_writer|

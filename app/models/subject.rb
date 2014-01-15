@@ -11,6 +11,7 @@ class Subject
   key :location, Hash
   key :classification_count, Integer
   key :coords, Array
+
   key :metadata, Hash
   key :size, String
 
@@ -18,12 +19,32 @@ class Subject
   key :group_type, String, :optional
   # timestamps
 
+  scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
+
+  def self.near(centre)
+    
+    distance = 0.075
+    regionals = []
+    lows  = Subject.where(:coords => {:$elemMatch => {:$gte => centre[0]-distance, :$gte => centre[1]-distance}}).to_a
+    lows.each{|s| regionals<<s if s.coords[0]<=centre[0]+distance && s.coords[1]<=centre[1]+distance } # && s.metadata["size"]=="0.1500x0.0750" }
+
+    subjects = {}
+    regionals.each do |s|
+      dist = Math.sqrt( ((s.coords[0]-centre[0]) * (s.coords[0]-centre[0])) + ((s.coords[1]-centre[1]) * (s.coords[1]-centre[1])) )
+      subjects[s.id] = dist
+    end
+
+    subjects.values.sort!
+    return subjects.select {|k, v| v < distance}.keys
+
+  end 
+
   def glat
   	self.coords[0].to_f
   end
 
   def glon
-  	self.coords[1]
+  	self.coords[1].to_f
   end
 
   def width
