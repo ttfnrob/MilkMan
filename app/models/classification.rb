@@ -9,6 +9,9 @@ class Classification
   key :user_name, String, :optional
   key :annotations, Array
   key :subject_ids, Array
+  key :zooniverse_id, String
+
+  scope :for_subject, lambda {|zid| where(:subject_ids => [Subject.find_by_zooniverse_id(zid).id]) }
 
   def subject
     Subject.find(subject_ids.first)

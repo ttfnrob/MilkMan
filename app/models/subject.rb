@@ -1,8 +1,8 @@
 class Subject
   include MongoMapper::Document
-  many :classifications
+  # many :classifications
   set_collection_name "milky_way_subjects"
- 
+
   key :project_id, ObjectId
   key :workflow_ids, Array
   key :zooniverse_id, String
@@ -21,8 +21,45 @@ class Subject
 
   scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
 
+  def classifications
+    Classification.where(:subject_ids => [Subject.find_by_zooniverse_id(self.zooniverse_id).id])
+  end
+
+  def annotations
+    self.classifications.map{|c|c.annotations}.flatten
+  end
+
+  def annotations_by_type(o="ego")
+    self.annotations.select{|a| a if a["name"]==o}
+  end
+
+  def extract_by_type(o)
+    objects = self.annotations.select{|a| a if a["name"]==o}
+    expected = objects.size.to_f/self.classification_count.to_f
+    # puts expected
+    if expected == 0
+      return nil
+    else
+      centers = objects.map{|i| [i["center"][0].to_f, i["center"][1].to_f]}
+      kmeans = KMeans.new(centers, :centroids => expected.ceil)
+      output = []
+      raw_objects = []
+      kmeans.view.each{|k| raw_objects << k.map{|i| centers[i]}}
+
+      raw_objects.each do |obj|
+        if obj.size>0
+          x_av = obj.transpose[0].inject{ |sum, el| sum + el }.to_f / obj.transpose[0].size
+          y_av = obj.transpose[1].inject{ |sum, el| sum + el }.to_f / obj.transpose[1].size
+          output << [x_av, y_av]
+        end
+      end
+
+      return output
+    end
+  end
+
   def self.near(centre)
-    
+
     distance = 0.075
     regionals = []
     lows  = Subject.where(:coords => {:$elemMatch => {:$gte => centre[0]-distance, :$gte => centre[1]-distance}}).to_a
@@ -37,7 +74,7 @@ class Subject
     subjects.values.sort!
     return subjects.select {|k, v| v < distance}.keys
 
-  end 
+  end
 
   def glat
   	self.coords[0].to_f
@@ -61,7 +98,7 @@ class Subject
 
   	return xs==ys ? xs : "scale conflict"
   end
-  
+
   def image
     self.location["standard"]
   end
@@ -74,7 +111,7 @@ class Subject
   	if self.metadata["markings"]
   		if self.object_count("blank")>=5 && self.state=="complete" && self.classification_count<=10
   		  return true
-	  	else	
+	  	else
 	  	  return false
 	    end
     else
@@ -82,4 +119,4 @@ class Subject
 	end
   end
 
-end  
+end

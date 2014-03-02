@@ -5,11 +5,11 @@ def closest_image
 	# Subject.find
 end
 
-EPS = 0.002
-MIN_PTS = 5
+EPS = 0.005
+MIN_PTS = 10
 
 points = []
-object = "galaxy"
+object = "bowshock"
 file = Dir.glob(Rails.root.to_s+"/data/raw/annotations/"+object+"*.csv").max_by {|f| File.mtime(f)}
 puts "Reading in data for type=#{object}"
 items=0
@@ -17,8 +17,8 @@ items=0
 # lonr = [267.0,280.0]
 # latr = [-0.5,+0.5]
 
-lonr = [0.0,10.0]
-latr = [2.0,3.0]
+lonr = [0.0,20.0]
+latr = [0.0,3.0]
 
 CSV.foreach(file, :headers => true) do |row|
   

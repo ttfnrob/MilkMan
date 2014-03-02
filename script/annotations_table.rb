@@ -9,14 +9,14 @@ CSV.open( Rails.root.to_s+"/data/raw/annotations/pillars_raw_"+DateTime.now.to_s
 CSV.open( Rails.root.to_s+"/data/raw/annotations/artifact_raw_"+DateTime.now.to_s(:number)+".csv", 'w') do |artifact_writer|
 CSV.open( Rails.root.to_s+"/data/raw/annotations/other_raw_"+DateTime.now.to_s(:number)+".csv", 'w') do |other_writer|
 
-bubble_writer << [ "type", "lon", "lat", "rx", "ry", "angle", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-galaxy_writer << [ "type", "lon", "lat", "rx", "ry", "angle", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-ego_writer << [ "type", "lon", "lat", "rx", "ry", "angle", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-cluster_writer << [ "type", "lon", "lat", "rx", "ry", "angle", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-bowshock_writer << [ "type", "lon", "lat", "width", "height", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-pillars_writer << [ "type", "lon", "lat", "width", "height", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-artifact_writer << [ "type", "lon", "lat", "width", "height", "zooniverse_id", "user_name", "user_ip", "created_at" ]
-other_writer << [ "type", "lon", "lat", "width", "height", "zooniverse_id", "user_name", "user_ip", "created_at" ]
+bubble_writer << [ "lon", "lat", "rx", "ry", "angle" ]
+galaxy_writer << [ "lon", "lat", "rx", "ry", "angle" ]
+ego_writer << [ "lon", "lat", "rx", "ry", "angle" ]
+cluster_writer << [ "lon", "lat", "rx", "ry", "angle" ]
+bowshock_writer << [ "lon", "lat", "width", "height" ]
+pillars_writer << [ "lon", "lat", "width", "height" ]
+artifact_writer << [ "lon", "lat", "width", "height" ]
+other_writer << [ "lon", "lat", "width", "height" ]
 
 total = Classification.size
 counter = 0
@@ -30,16 +30,16 @@ Classification.each do |c|
 		c.annotations.each do |a|
 			# puts a
 			if a["name"]
-				bubble_writer << [ a["name"], lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*px, a["ry"].to_f*px, a["angle"].to_f, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["name"] == "bubble"
-				galaxy_writer << [ a["name"], lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*px, a["ry"].to_f*px, a["angle"].to_f, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["name"] == "galaxy"
-				ego_writer << [ a["name"], lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*px, a["ry"].to_f*px, a["angle"].to_f, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["name"] == "ego"
-				cluster_writer << [ a["name"], lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*px, a["ry"].to_f*px, a["angle"].to_f, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["name"] == "cluster"
+				bubble_writer << [ lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*2.0*px, a["ry"].to_f*2.0*px, a["angle"].to_f ] if a["name"] == "bubble" && a["rx"].to_f > 0 && a["ry"].to_f > 0
+				galaxy_writer << [ lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*2.0*px, a["ry"].to_f*2.0*px, a["angle"].to_f ] if a["name"] == "galaxy" && a["rx"].to_f > 0 && a["ry"].to_f > 0
+				ego_writer << [ lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*2.0*px, a["ry"].to_f*2.0*px, a["angle"].to_f ] if a["name"] == "ego" && a["rx"].to_f > 0 && a["ry"].to_f > 0
+				cluster_writer << [ lon+a["center"][0].to_f*px, lat+a["center"][1].to_f*px, a["rx"].to_f*2.0*px, a["ry"].to_f*2.0*px, a["angle"].to_f ] if a["name"] == "cluster" && a["rx"].to_f > 0 && a["ry"].to_f > 0
 				
 				if a["name"] == "object"
-					bowshock_writer << [ a["content"], lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["content"] == "bowshock"
-					pillars_writer << [ a["content"], lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["content"] == "pillars"
-					artifact_writer << [ a["content"], lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["content"] == "artifact"
-					other_writer << [ a["content"], lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px, c.subject.zooniverse_id, c.user_name, c.user_ip, c.created_at ] if a["content"] == "other"
+					bowshock_writer << [ lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px ] if a["content"] == "bowshock" && a["width"].to_f > 0 && a["width"].to_f > 0
+					pillars_writer << [ lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px ] if a["content"] == "pillars" && a["width"].to_f > 0 && a["width"].to_f > 0
+					artifact_writer << [ lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px ] if a["content"] == "artifact" && a["width"].to_f > 0 && a["width"].to_f > 0
+					other_writer << [ lon+a["left"].to_f*px, lat+(400.0-a["top"].to_f).to_f*px, a["width"].to_f*px, a["height"].to_f*px ] if a["content"] == "other" && a["width"].to_f > 0 && a["width"].to_f > 0
 				end
 			end
 		end

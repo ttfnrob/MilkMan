@@ -44,6 +44,8 @@ GEM
     i18n (0.6.9)
     journey (1.0.4)
     json (1.8.1)
+    k_means (0.0.7)
+      distance_measures (>= 0.0.0)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -101,5 +103,6 @@ PLATFORMS
 DEPENDENCIES
   bson_ext
   dbscan
+  k_means
   mongo_mapper
   rails (= 3.2.5)
