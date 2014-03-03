@@ -26,36 +26,49 @@ class Subject
   end
 
   def annotations
-    self.classifications.map{|c|c.annotations}.flatten
+    self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
   end
 
   def annotations_by_type(o="ego")
     self.annotations.select{|a| a if a["name"]==o}
   end
 
-  def extract_by_type(o)
+  def dbscan_by_type(o)
+    output = { "raw"=>[], "reduced"=>[], "signal"=>{}, "noise"=>[] }
+
     objects = self.annotations.select{|a| a if a["name"]==o}
-    expected = objects.size.to_f/self.classification_count.to_f
-    # puts expected
-    if expected == 0
-      return nil
-    else
-      centers = objects.map{|i| [i["center"][0].to_f, i["center"][1].to_f]}
-      kmeans = KMeans.new(centers, :centroids => expected.ceil)
-      output = []
-      raw_objects = []
-      kmeans.view.each{|k| raw_objects << k.map{|i| centers[i]}}
-
-      raw_objects.each do |obj|
-        if obj.size>0
-          x_av = obj.transpose[0].inject{ |sum, el| sum + el }.to_f / obj.transpose[0].size
-          y_av = obj.transpose[1].inject{ |sum, el| sum + el }.to_f / obj.transpose[1].size
-          output << [x_av, y_av]
-        end
-      end
-
-      return output
+    objects.each do |i|
+      rot = i["angle"].to_f%180
+      rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
+      ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
+      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (3/90)*rot%90 ]
     end
+
+    dbscan = Clusterer.new( output["raw"], {:min_points => 3, :epsilon => 20})
+    dbscan.results.each do |k, arr|
+      unless k==-1
+        output["signal"][k] = []
+        arr.each{|i| output["signal"][k] << i}
+        avx = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
+        avy = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
+        avrx = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
+        avry = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
+        avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
+        output["reduced"] << [avx, avy, avrx, avry, (90/3)*avrot]
+      else
+        output["noise"] = arr
+      end
+    end
+    return output
+  end
+
+  def dbscan
+    types = ["ego", "bubble"]
+    result = {}
+    types.each do |o|
+      result[o] = self.dbscan_by_type(o)
+    end
+    return result
   end
 
   def self.near(centre)

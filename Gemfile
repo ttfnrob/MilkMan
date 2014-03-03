@@ -5,6 +5,8 @@ gem 'rails', '3.2.5'
 gem "mongo_mapper"
 gem "bson_ext"
 
+gem "jquery-rails"
+
 gem "dbscan"
 gem "k_means"
 

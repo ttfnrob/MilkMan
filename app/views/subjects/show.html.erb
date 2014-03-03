@@ -1,0 +1,40 @@
+<% width = 800.0 %>
+<% height = 400.0 %>
+<svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+  <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
+
+  <% @results.each do |type,res| %>
+    <% res["noise"].each do |d| %>
+      <ellipse cx="<%= d[0] %>" cy="<%= d[1] %>" rx="<%= d[2] %>" ry="<%= d[3] %>" <%= type %>="-1" fill="#000000" stroke="black" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0)" transform="rotate(<%= d[4] %>, <%= d[0] %>, <%= d[1] %>)"></ellipse>
+    <% end %>
+  <% end %>
+
+  <% @results.each do |type,res| %>
+    <% res["signal"].each do |k,arr| %>
+      <% arr.each do |d| %>
+        <ellipse cx="<%= d[0] %>" cy="<%= d[1] %>" rx="<%= d[2] %>" ry="<%= d[3] %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" transform="rotate(<%= d[4] %>, <%= d[0] %>, <%= d[1] %>)"></ellipse>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% @results.each do |type,res| %>
+    <% count = 0 %>
+    <% res["reduced"].each do |d| %>
+      <ellipse cx="<%= d[0] %>" cy="<%= d[1] %>" rx="<%= d[2] %>" ry="<%= d[3] %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0.25" stroke-width="2" tabindex="0" opacity="0.9" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0)" transform="rotate(<%= d[4] %>, <%= d[0] %>, <%= d[1] %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+      <% count+=1 %>
+    <% end %>
+  <% end %>
+
+</svg>
+<div id="catalogue-info">
+    <ul>
+        <li><span class="key">Subject</span>: <%= @s.zooniverse_id %></li>
+        <li><span class="key">Zooniverse ID</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
+        <li><span class="key">Coords</span>: <%= @s.coords %></li>
+    </ul>
+</div>
+<div id="computed-info">
+    <ul>
+        <li><span class="key">Volunteers</span>: <%= @s.classification_count %></li>
+    </ul>
+</div>

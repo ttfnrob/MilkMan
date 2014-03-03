@@ -1,4 +1,8 @@
 Milkman::Application.routes.draw do
+  get "subjects/index"
+
+  match 'subjects/:zoo_id' => 'subjects#show'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
