@@ -1,3 +1,15 @@
+def mean(array)
+  array.inject(0) { |sum, x| sum += x } / array.size.to_f
+end
+def variance(array)
+  m = mean(array)
+  variance = array.inject(0) { |variance, x| variance += (x - m) ** 2 }
+  return variance
+end
+def stdev(array)
+  return Math.sqrt(variance(array)/(array.size-1))
+end
+
 class Subject
   include MongoMapper::Document
   # many :classifications
@@ -25,6 +37,10 @@ class Subject
     Classification.where(:subject_ids => [Subject.find_by_zooniverse_id(self.zooniverse_id).id])
   end
 
+  def user_names
+    self.classifications.map{|c|c.user_name}.uniq
+  end
+
   def annotations
     self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
   end
@@ -41,29 +57,31 @@ class Subject
       rot = i["angle"].to_f%180
       rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
       ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
-      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (3/90)*rot%90 ]
+      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (3.0/90.0)*(rot%90.0) ]
     end
 
     dbscan = Clusterer.new( output["raw"], {:min_points => 3, :epsilon => 20})
     dbscan.results.each do |k, arr|
       unless k==-1
-        output["signal"][k] = []
-        arr.each{|i| output["signal"][k] << i}
-        avx = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
-        avy = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
-        avrx = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
-        avry = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
+        output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/3.0)*i[4] } }
+        avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
+        avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
+        avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
+        avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
         avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
-        output["reduced"] << [avx, avy, avrx, avry, (90/3)*avrot]
+
+        variances = [ "xvar"=>variance(arr.transpose[0]), "yvar"=>variance(arr.transpose[1]), "rxvar"=>variance(arr.transpose[2]), "ryvar"=>variance(arr.transpose[3]) ]
+
+        output["reduced"] << { "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/3.0)*avrot, "variances" => variances }
       else
-        output["noise"] = arr
+        output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
       end
     end
     return output
   end
 
   def dbscan
-    types = ["ego", "bubble"]
+    types = ["bubble", "cluster", "ego", "galaxy"]
     result = {}
     types.each do |o|
       result[o] = self.dbscan_by_type(o)
