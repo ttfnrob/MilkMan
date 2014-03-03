@@ -38,4 +38,36 @@ module ApplicationHelper
     return [out[0] * (180.0/3.1415926535), out[1] * (180.0/3.1415926535)]
   end
 
+  def mag2flux(mag,band)
+    f_0 = {"U" => 1810.0,"B" => 4260.0,"V" => 3540.0,"R" => 2870.0,"I" => 2250.0,"J" => 1670.0,"H" => 980.0,"K" => 620.0,"L" => 280.0,"M" => 150.0}
+    if f_0.has_key?(band)
+      mag ? flux = f_0[band]*10**(-mag/2.5) : 0.0
+    else
+      mag = ""
+    end
+  end
+
+  def flux2mag(flux,band)
+    f_0 = {"U" => 1810.0,"B" => 4260.0,"V" => 3540.0,"R" => 2870.0,"I" => 2250.0,"J" => 1670.0,"H" => 980.0,"K" => 620.0,"L" => 280.0,"M" => 150.0}
+    if f_0.has_key?(band)
+      flux ? mag = -2.5*(Math.log(flux/f_0[band]))/Math.log(10) : 0.0
+    else
+      flux = ""
+    end
+  end
+
+  def mean(array)
+    array.inject(0) { |sum, x| sum += x } / array.size.to_f
+  end
+
+  def variance(array)
+    m = mean(array)
+    variance = array.inject(0) { |variance, x| variance += (x - m) ** 2 }
+    return variance
+  end
+
+  def stdev(array)
+    return Math.sqrt(variance(array)/(array.size-1))
+  end
+
 end
