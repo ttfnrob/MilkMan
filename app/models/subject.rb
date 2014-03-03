@@ -57,22 +57,22 @@ class Subject
       rot = i["angle"].to_f%180
       rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
       ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
-      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (3.0/90.0)*(rot%90.0) ]
+      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
     end
 
-    dbscan = Clusterer.new( output["raw"], {:min_points => 3, :epsilon => 20})
+    dbscan = Clusterer.new( output["raw"], {:min_points => 5, :epsilon => 20})
     dbscan.results.each do |k, arr|
       unless k==-1
-        output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/3.0)*i[4] } }
+        output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
         avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
         avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
         avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
         avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
         avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
 
-        variances = [ "xvar"=>variance(arr.transpose[0]), "yvar"=>variance(arr.transpose[1]), "rxvar"=>variance(arr.transpose[2]), "ryvar"=>variance(arr.transpose[3]) ]
+        quality = { "qx"=>stdev(arr.transpose[0]), "qy"=>stdev(arr.transpose[1]), "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]) }
 
-        output["reduced"] << { "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/3.0)*avrot, "variances" => variances }
+        output["reduced"] << { "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
       else
         output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
       end
