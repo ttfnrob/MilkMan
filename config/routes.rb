@@ -1,6 +1,6 @@
 Milkman::Application.routes.draw do
   get "subjects/index"
-
+  get "subjects/examples"
   match 'subjects/:zoo_id' => 'subjects#show'
 
   # The priority is based upon order of creation:

@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'json'
+
 def mean(array)
   array.inject(0) { |sum, x| sum += x } / array.size.to_f
 end
@@ -12,6 +15,7 @@ end
 
 class Subject
   include MongoMapper::Document
+  include ApplicationHelper
   # many :classifications
   set_collection_name "milky_way_subjects"
 
@@ -32,6 +36,10 @@ class Subject
   # timestamps
 
   scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
+
+  def switched?
+    self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005"]
+  end
 
   def classifications
     Classification.where(:subject_ids => [Subject.find_by_zooniverse_id(self.zooniverse_id).id])
@@ -108,11 +116,11 @@ class Subject
   end
 
   def glat
-  	self.coords[0].to_f
+  	self.switched? ? self.coords[1].to_f : self.coords[0].to_f
   end
 
   def glon
-  	self.coords[1].to_f
+  	self.switched? ? self.coords[0].to_f : self.coords[1].to_f
   end
 
   def width
@@ -147,7 +155,76 @@ class Subject
 	    end
     else
 	    return false
-	end
+  	end
+  end
+
+  def mag2flux(mag,band)
+    f_0 = {"U" => 1810.0,"B" => 4260.0,"V" => 3540.0,"R" => 2870.0,"I" => 2250.0,"J" => 1670.0,"H" => 980.0,"K" => 620.0,"L" => 280.0,"M" => 150.0}
+    if f_0.has_key?(band)
+      mag ? flux = f_0[band]*10**(-mag/2.5) : 0.0
+    else
+      mag = ""
+    end
+  end
+
+  def flux2mag(flux,band)
+    f_0 = {"U" => 1810.0,"B" => 4260.0,"V" => 3540.0,"R" => 2870.0,"I" => 2250.0,"J" => 1670.0,"H" => 980.0,"K" => 620.0,"L" => 280.0,"M" => 150.0}
+    if f_0.has_key?(band)
+      flux ? mag = -2.5*(Math.log(flux/f_0[band]))/Math.log(10) : 0.0
+    else
+      flux = ""
+    end
+  end
+
+  def simbad_url(radius=5, top=25)
+
+    #Get equatorial coordinates
+    eq = gal2equ(self.glon, self.glat)
+    ra = eq[0]
+    dec = eq[1]
+
+    #Build URL
+    url_start = "http://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=ADQL&format=JSON&query="
+
+    get_url = url_start+URI::encode("SELECT TOP #{top} basic.OID, RA, DEC, main_id, coo_bibcode, filter, flux, ident.id, otype, flux.bibcode FROM basic, flux JOIN ident USING(oidref) WHERE flux.oidref = basic.oid AND ra < #{ra+radius} AND ra > #{ra-radius} AND dec < #{dec+radius} AND dec > #{dec-radius}")
+
+  end
+
+  def search_simbad(radius=5, top=25)
+
+    get_url=self.simbad_url(radius, top)
+    # the_data = Rails.cache.fetch("simbad-#{radius}-#{top}", :expires_in => 6.hours) {
+      json = open("#{get_url}").read
+      the_data =  JSON.parse(json)
+    # }
+
+    output = Array.new
+    if the_data["data"].size > 0
+      map = the_data["data"].map {|item| {item[3] => {"object_name" => item[3], "type" => item[8], "bibcode" => item[4], "ra" => item[1], "dec" => item[2], item[5] => mag2flux(item[6],item[5]), "other_name" => item[7], "other_bib" => item[9] } } }
+      red = map.reduce({}) {|h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h}
+      red.each do |r|
+        #Collect up names and bibcodes and merge objects into single entries
+        names = r[1].collect {|i| i["other_name"] }
+        bibs = r[1].collect {|i| i["other_bib"] }
+        obj = r[1].inject { |all, h| all.merge!(h) }
+
+        #Clean up and format object names
+        obj.delete("other_name")
+        obj["all_names"] = (names).uniq!
+
+        #Clean up and format bibcodes
+        obj.delete("other_bib")
+        bibs << obj["bibcode"]
+        obj.delete("bibcode")
+        obj["bibcodes"] = (bibs).uniq!
+
+        #output object
+        output << obj
+      end
+    end
+
+    return output
+
   end
 
 end
