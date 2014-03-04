@@ -1,0 +1,16 @@
+#simbad-objects {
+  display: none;
+}
+
+#maps {
+  display: inline-block;
+  float: left;
+  width: 800px;
+  padding: 0 10px 0 0;
+}
+
+#info {
+  float: left;
+  display: inline-block;
+  width: 400px;
+}

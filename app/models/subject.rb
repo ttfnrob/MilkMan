@@ -26,7 +26,7 @@ class Subject
   scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
 
   def switched?
-    self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005"]
+    self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005", "GMW0000006", "GMW0000007"]
   end
 
   def classifications
@@ -146,26 +146,50 @@ class Subject
   	end
   end
 
-  def simbad_url(radius=5, top=25)
-
-    #Get equatorial coordinates
-    eq = gal2equ(self.glon, self.glat)
-    ra = eq[0]
-    dec = eq[1]
+  def simbad_url(radius=self.width*2, top=5000)
+    #Define corners of search box
+    eqlow  = gal2equ(self.glon-self.width*2, self.glat-self.width)
+    eqhigh = gal2equ(self.glon+self.width*2, self.glat+self.width)
 
     #Build URL
     url_start = "http://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=ADQL&format=JSON&query="
-
-    get_url = url_start+URI::encode("SELECT TOP #{top} basic.OID, RA, DEC, main_id, coo_bibcode, filter, flux, ident.id, otype, flux.bibcode FROM basic, flux JOIN ident USING(oidref) WHERE flux.oidref = basic.oid AND ra < #{ra+radius} AND ra > #{ra-radius} AND dec < #{dec+radius} AND dec > #{dec-radius}")
+    get_url = url_start+URI::encode("SELECT TOP #{top} basic.OID, RA, DEC, main_id, coo_bibcode, filter, flux, ident.id, otype, flux.bibcode FROM basic, flux JOIN ident USING(oidref) WHERE flux.oidref = basic.oid AND ra < #{eqhigh[0]} AND ra > #{eqlow[0]} AND dec < #{eqhigh[1]} AND dec > #{eqlow[1]}")
 
   end
 
-  def search_simbad(radius=5, top=25)
+  def simbad_gal_list(radius=self.width*2, top=5000)
+    data = self.search_simbad(radius, top)
+    new_data = []
+    data.each do |o|
+      gco = equ2gal(o["ra"], o["dec"])
+      o["glat"] = gco[0]
+      o["glon"] = gco[1]
+      new_data << o
+    end
+    return new_data
+  end
+
+  def simbad_for_svg(radius=self.width*2, top=5000)
+    data = self.search_simbad(radius, top)
+    new_data = []
+    data.each do |o|
+      gco = equ2gal(o["ra"], o["dec"])
+      xoff = ( gco[0] - self.glon ) / self.pixel_scale
+      yoff = ( gco[1] - self.glat ) / self.pixel_scale
+      o["x"] = 400 - xoff
+      o["y"] = 200 + yoff
+      new_data << o
+    end
+    return new_data
+  end
+
+  def search_simbad(radius=self.width*2, top=5000)
 
     get_url=self.simbad_url(radius, top)
     # the_data = Rails.cache.fetch("simbad-#{radius}-#{top}", :expires_in => 6.hours) {
       json = open("#{get_url}").read
       the_data =  JSON.parse(json)
+      puts "No data returned" if json.empty?
     # }
 
     output = Array.new

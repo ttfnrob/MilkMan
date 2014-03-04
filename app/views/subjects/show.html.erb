@@ -1,44 +1,74 @@
 <% width = 800.0 %>
 <% height = 400.0 %>
-<svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
-  <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
+<div id="maps">
+  <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+    <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
 
-  <% @results.each do |type,res| %>
-    <% res["noise"].each do |d| %>
-      <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" <%= type %>="-1" fill="#000000" stroke="black" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)"></ellipse>
-    <% end %>
-  <% end %>
-
-  <% @results.each do |type,res| %>
-    <% res["signal"].each do |k,arr| %>
-      <% arr.each do |d| %>
-        <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0"  transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)"></ellipse>
+    <% @results.each do |type,res| %>
+      <% res["noise"].each do |d| %>
+        <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" <%= type %>="-1" fill="#000000" stroke="black" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)"></ellipse>
       <% end %>
     <% end %>
-  <% end %>
 
-  <% @results.each do |type,res| %>
-    <% count = 0 %>
-    <% res["reduced"].each do |d| %>
-      <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
-      <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
-      <% count+=1 %>
-    <% end %>
-  <% end %>
-
-</svg>
-<div id="catalogue-info">
-    <ul>
-        <li><span class="key">Subject</span>: <%= @s.zooniverse_id %></li>
-        <li><span class="key">Zooniverse ID</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
-        <li><span class="key">Coords</span>: <%= @s.coords %></li>
-    </ul>
-</div>
-<div id="computed-info">
-    <ul>
-        <% @types.each do |k,v| %>
-        <li><span class="key"><%= k %></span>: <%= @results[v].map{|k,a|a.size}.sum %> raw, <%= @results[v]["reduced"].size %> reduced from <%= @results[v]["signal"].map{|k,a| a.size}.sum %> candidates</li>
+    <% @results.each do |type,res| %>
+      <% res["signal"].each do |k,arr| %>
+        <% arr.each do |d| %>
+          <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0"  transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)"></ellipse>
         <% end %>
-        <li><span class="key">Volunteers</span>: <%= @s.classification_count %> (<%= @s.user_names.join(", ") %>)</li>
-    </ul>
+      <% end %>
+    <% end %>
+
+    <% @results.each do |type,res| %>
+      <% count = 0 %>
+      <% res["reduced"].each do |d| %>
+        <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+        <ellipse cx="<%= d["x"] %>" cy="<%= d["y"] %>" rx="<%= d["rx"] %>" ry="<%= d["ry"] %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d["angle"] %>, <%= d["x"] %>, <%= d["y"] %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+        <% count+=1 %>
+      <% end %>
+    <% end %>
+  </svg>
+
+  <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+    <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>" />
+    <% count=0 %>
+    <% @simbad.each do |d| %>
+        <circle cx="<%= d["x"] %>" cy="<%= d["y"] %>" r="10" name="simbad-<%= count %>" fill="#000000" stroke="white" fill-opacity="0.01" stroke-width="2" tabindex="0" opacity="0.2" onmouseover="$('[name=simbad-<%= count %>]').css('opacity', '1.0');" onmouseout="$('text[name=simbad-<%= count %>]').css('opacity', '0.0'); $('circle[name=simbad-<%= count %>]').css('opacity', '0.2');"></circle>
+        <text opacity="1" fill="#ffffff" stroke="none" name="simbad-<%= count %>" font="10px &quot;Arial&quot;" text-anchor="middle" y="<%= d["y"] %>" x="<%= d["x"]+16 %>" style="text-anchor: middle; font: 10px &quot;Arial&quot;; opacity: 0.0;"><%= d["object_name"] %></text>
+    <% count+=1 %>
+    <% end %>
+  </svg>
+</div>
+
+<div id="info">
+  <div id="catalogue-info">
+      <ul>
+          <li><span class="key">Subject</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
+          <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>
+      </ul>
+  </div>
+  <div id="simbad-objects">
+      <p><%= @simbad_gal.size %> objects found</p>
+      <table style="width:300px">
+        <% @simbad_gal.each do |a| %>
+        <tr>
+          <td> <%= a["object_name"] %></td>
+          <td> <%= a["type"] %></td>
+          <td> <%= a["glat"] %></td>
+          <td> <%= a["glon"] %></td>
+          <td> <%= a["ra"] %></td>
+          <td> <%= a["dec"] %></td>
+        </tr>
+        <% end %>
+      </table>
+  </div>
+  <div id="computed-info">
+      <ul>
+          <% @types.each do |k,v| %>
+          <li><span class="key"><%= k %></span>: <%= @results[v]["reduced"].size %> from <%= @results[v].map{|k,a|a.size}.sum %> drawings, <%= @results[v]["signal"].map{|k,a| a.size}.sum %> candidates</li>
+          <% end %>
+        </ul>
+        <ul>
+          <li><span class="key">Volunteers</span>: <%= @s.classification_count %> (<%= @s.user_names.join(", ") %>)</li>
+      </ul>
+  </div>
 </div>
