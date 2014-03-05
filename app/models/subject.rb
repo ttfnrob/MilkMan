@@ -38,9 +38,15 @@ class Subject
   end
 
   def annotations
-    as = Rails.cache.fetch("annotations-#{self.zooniverse_id}", :expires_in => 6.hours) {
-      self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
-    }
+    # cached annotation - sinc eDB is replaced each time these will only cache until next restore
+    if self["cached_annotations"]
+      return self["cached_annotations"]
+    else
+      a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+      self["cached_annotations"] = a
+      self.save
+      return a
+    end
   end
 
   def annotations_by_type(o="ego")
