@@ -1,4 +1,6 @@
 Milkman::Application.routes.draw do
+  root :to => "welcome#index"
+
   get "subjects/index"
   get "subjects/examples"
   match 'subjects/:zoo_id' => 'subjects#show'
