@@ -38,7 +38,9 @@ class Subject
   end
 
   def annotations
-    self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+    as = Rails.cache.fetch("annotations-#{self.zooniverse_id}", :expires_in => 6.hours) {
+      self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+    }
   end
 
   def annotations_by_type(o="ego")
