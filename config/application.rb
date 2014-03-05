@@ -46,12 +46,12 @@ module Milkman
     end
 
     config.after_initialize do
-        Thread.new do
-          puts "Preprocessing subjects..."
-          Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(250).each do |i|
-            puts " -> #{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
-          end
-        end
+        # Thread.new do
+        #   puts "Preprocessing subjects..."
+        #   Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(250).each do |i|
+        #     puts " -> #{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
+        #   end
+        # end
     end
 
     # def after_initialize(&block)
