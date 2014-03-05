@@ -25,6 +25,10 @@ class Subject
 
   scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
 
+  def self.no_cached_annotations
+    Subject.where(:cached_annotations => nil)
+  end
+
   def switched?
     self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005", "GMW0000006", "GMW0000007"]
   end
@@ -47,6 +51,13 @@ class Subject
       self.save
       return a
     end
+  end
+
+  def annotations!
+    a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+    self["cached_annotations"] = a
+    self.save
+    return a
   end
 
   def annotations_by_type(o="ego")
