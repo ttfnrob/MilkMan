@@ -14,3 +14,16 @@
   display: inline-block;
   width: 400px;
 }
+
+h1, h2, h3 {
+  display: inline-block;
+}
+
+#search-buttons {
+    display: inline-block;
+}
+
+
+#search-buttons button {
+    display: inline-block;
+}

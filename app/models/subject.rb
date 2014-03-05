@@ -88,7 +88,7 @@ class Subject
       output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
     end
 
-    dbscan = Clusterer.new( output["raw"], {:min_points => 5, :epsilon => 20})
+    dbscan = Clusterer.new( output["raw"], {:min_points => 5, :epsilon => 25})
     dbscan.results.each do |k, arr|
       unless k==-1
         output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
