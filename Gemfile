@@ -5,7 +5,7 @@ ruby '1.9.3'
 gem 'rails', '3.2.5'
 gem "mongo_mapper"
 gem "bson_ext"
-
+gem 'unicorn'
 gem "jquery-rails"
 
 gem "dbscan"
