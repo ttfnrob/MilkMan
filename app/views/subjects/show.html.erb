@@ -64,7 +64,7 @@
   <div id="computed-info">
       <ul>
           <% @types.each do |k,v| %>
-          <li><span class="key"><%= k %></span>: <%= @results[v]["reduced"].size %> from <%= @results[v].map{|k,a|a.size}.sum %> drawings, <%= @results[v]["signal"].map{|k,a| a.size}.sum %> candidates</li>
+          <li><span class="key"><%= k %></span>: <%= @results[v]["reduced"].size %> from <%= @results[v].map{|k,a|a.size}.sum %> drawings, <%= @results[v]["signal"].map{|k,a| a.size}.sum %> in clusters</li>
           <% end %>
         </ul>
         <ul>

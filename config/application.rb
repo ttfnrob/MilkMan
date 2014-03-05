@@ -47,5 +47,8 @@ module Milkman
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
+
+    production:
+      uri: <%= ENV['MONGOHQ_URL'] %>
   end
 end
