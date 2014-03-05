@@ -28,15 +28,6 @@
     <% end %>
   </svg>
 
-  <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
-    <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>" />
-    <% count=0 %>
-    <% @simbad.each do |d| %>
-        <circle cx="<%= d["x"] %>" cy="<%= d["y"] %>" r="10" name="simbad-<%= count %>" fill="#000000" stroke="white" fill-opacity="0.01" stroke-width="2" tabindex="0" opacity="0.2" onmouseover="$('[name=simbad-<%= count %>]').css('opacity', '1.0');" onmouseout="$('text[name=simbad-<%= count %>]').css('opacity', '0.0'); $('circle[name=simbad-<%= count %>]').css('opacity', '0.2');"></circle>
-        <text opacity="1" fill="#ffffff" stroke="none" name="simbad-<%= count %>" font="10px &quot;Arial&quot;" text-anchor="middle" y="<%= d["y"] %>" x="<%= d["x"]+16 %>" style="text-anchor: middle; font: 10px &quot;Arial&quot;; opacity: 0.0;"><%= d["object_name"] %></text>
-    <% count+=1 %>
-    <% end %>
-  </svg>
 </div>
 
 <div id="info">
@@ -45,21 +36,6 @@
           <li><span class="key">Subject</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
           <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>
       </ul>
-  </div>
-  <div id="simbad-objects">
-      <p><%= @simbad_gal.size %> objects found</p>
-      <table style="width:300px">
-        <% @simbad_gal.each do |a| %>
-        <tr>
-          <td> <%= a["object_name"] %></td>
-          <td> <%= a["type"] %></td>
-          <td> <%= a["glat"] %></td>
-          <td> <%= a["glon"] %></td>
-          <td> <%= a["ra"] %></td>
-          <td> <%= a["dec"] %></td>
-        </tr>
-        <% end %>
-      </table>
   </div>
   <div id="computed-info">
       <ul>

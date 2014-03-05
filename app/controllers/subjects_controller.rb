@@ -7,8 +7,8 @@ class SubjectsController < ApplicationController
     @types = {"Bubbles"=>"bubble", "Clusters"=>"cluster", "EGOs"=>"ego", "Galaxies"=>"galaxy"}
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @results = @s.dbscan
-    @simbad_gal = @s.simbad_gal_list
-    @simbad = @s.simbad_for_svg
+    # @simbad_gal = @s.simbad_gal_list
+    # @simbad = @s.simbad_for_svg
   end
 
   def examples
