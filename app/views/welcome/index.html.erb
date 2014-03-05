@@ -1,32 +1,7 @@
-<h1>Milk Man</h1>
-<h3>Data delivery for the Milky Way Project.</h3>
-
-<input type="textbox" id="searchID" value="e.g. AMW0002t48" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val('e.g. AMW0002t48');" />
-<button id="searchButton" type="submit">Search</button>
-
 <h4>Some Examples</h4>
 <ul>
+  <% Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(250).each do |i| %>
+    puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
+  <% end %>
   <li><a href="/subjects/AMW0002t48">Huge EGO, nice bubble (AMW0002t48)</a></li>
 </ul>
-
-<script type="text/javascript">
-
-  function goToSearch(){
-    window.location = ('/subjects/'+$('#searchID').val());
-  }
-
-  $('#searchButton').click(function() {
-    goToSearch();
-  });
-
-  $('#searchID').bind("enterKey",function(e){
-    goToSearch();
-  });
-
-  $('#searchID').keyup(function(e){
-      if(e.keyCode == 13)
-      {
-          $(this).trigger("enterKey");
-      }
-  });
-</script>

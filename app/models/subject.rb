@@ -43,21 +43,34 @@ class Subject
 
   def annotations
     # cached annotation - sinc eDB is replaced each time these will only cache until next restore
-    if self["cached_annotations"]
-      return self["cached_annotations"]
+    unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
+        if self["cached_annotations"]
+        return self["cached_annotations"]
+      else
+        a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+        self["cached_annotations"] = a
+        self.save
+        return a
+      end
     else
-      a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
-      self["cached_annotations"] = a
-      self.save
-      return a
+      return {}
     end
   end
 
   def annotations!
-    a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
-    self["cached_annotations"] = a
-    self.save
-    return a
+    unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
+      a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+      self["cached_annotations"] = a
+      self.save
+      return a
+    else
+      return {}
+    end
+  end
+
+  def self.random
+    s = Subject.where(:state => "complete").where(:cached_annotations.ne => nil)
+    s.skip(rand(s.size-1)).first
   end
 
   def annotations_by_type(o="ego")

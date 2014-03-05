@@ -45,6 +45,19 @@ module Milkman
       g.orm :mongo_mapper
     end
 
+    config.after_initialize do
+        Thread.new do
+          puts "Preprocessing subjects..."
+          Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(250).each do |i|
+            puts " -> #{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
+          end
+        end
+    end
+
+    # def after_initialize(&block)
+    #   ActiveSupport.on_load(:after_initialize, :yield => true, &block)
+    # end
+
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
   end

@@ -5,8 +5,44 @@
   <%= stylesheet_link_tag :all %>
   <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
+
+  <script type="text/javascript">
+  $( document ).ready(function() {
+    function goToSearch(){
+      window.location = ('/subjects/'+$('#searchID').val());
+    }
+
+    $('#randomButton').click(function() {
+      window.location = ('/subjects/<%= Subject.random.zooniverse_id %>');
+    });
+
+    $('#searchButton').click(function() {
+      goToSearch();
+    });
+
+    $('#searchID').bind("enterKey",function(e){
+      goToSearch();
+    });
+
+    $('#searchID').keyup(function(e){
+        if(e.keyCode == 13)
+        {
+            $(this).trigger("enterKey");
+        }
+    });
+  });
+  </script>
+
 </head>
 <body>
+<h1>Milk Man</h1>
+<h3>Data delivery for the Milky Way Project.</h3>
+
+<div id="search-buttons"
+  <input type="textbox" id="searchID" value="e.g. AMW0002t48" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val('e.g. AMW0002t48');" />
+  <button id="searchButton" type="submit">Search</button>
+  <button id="randomButton" type="submit">Random</button>
+</div>
 
 <%= yield %>
 
