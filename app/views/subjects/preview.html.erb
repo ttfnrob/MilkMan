@@ -1,0 +1,32 @@
+<% scale = 0.36 %>
+<% width = 800.0*scale %>
+<% height = 400.0*scale %>
+<div class="subject-preview">
+<svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+  <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
+
+  <% @results.each do |type,res| %>
+    <% res["noise"].each do |d| %>
+      <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" <%= type %>="-1" fill="#000000" stroke="black" fill-opacity="0" stroke-width="2*scale" tabindex="0" opacity="0" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)"></ellipse>
+    <% end %>
+  <% end %>
+
+  <% @results.each do |type,res| %>
+    <% res["signal"].each do |k,arr| %>
+      <% arr.each do |d| %>
+        <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" <%= type %>="<%= @s.zooniverse_id %>-<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2*scale" tabindex="0" opacity="0"  transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)"></ellipse>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% @results.each do |type,res| %>
+    <% count = 0 %>
+    <% res["reduced"].each do |d| %>
+      <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4*scale" tabindex="0" opacity="0.5" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= @s.zooniverse_id %>-<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= @s.zooniverse_id %>-<%= count %>]').css('opacity', '0');" ></ellipse>
+      <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2*scale" tabindex="0" opacity="1.0" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= @s.zooniverse_id %>-<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= @s.zooniverse_id %>-<%= count %>]').css('opacity', '0');" ></ellipse>
+      <% count+=1 %>
+    <% end %>
+  <% end %>
+</svg>
+</div>
+<a title="Explore Image" href="/subjects/<%= @s.zooniverse_id %>" class="preview-link">&rarr;</a>

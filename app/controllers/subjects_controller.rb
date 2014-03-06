@@ -11,6 +11,16 @@ class SubjectsController < ApplicationController
     # @simbad = @s.simbad_for_svg
   end
 
+  def preview
+    width = 400
+    height = 200
+    @hex = {"bubble" => "#57D6E4", "cluster" => "#D1C056", "ego" => "#4FD84E", "galaxy" => "#D86593", "other" => "#8963DD"}
+    @types = {"Bubbles"=>"bubble", "Clusters"=>"cluster", "EGOs"=>"ego", "Galaxies"=>"galaxy"}
+    @s = Subject.find_by_zooniverse_id(params[:zoo_id])
+    @results = @s.dbscan
+    render :layout => false
+  end
+
   def examples
     @examples = ["AMW0002t48", "AMW0000ora"]
     @display = {}

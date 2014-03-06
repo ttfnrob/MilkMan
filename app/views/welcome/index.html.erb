@@ -1,7 +1,15 @@
 <h4>Some Examples</h4>
-<ul>
-  <% Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(250).each do |i| %>
-    puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
+<div id="preview-gallery">
+  <% Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(24).each do |s| %>
+    <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
+    <script type="text/javascript">
+      $.ajax({
+        url: "/subjects/preview/<%= s.zooniverse_id %>",
+        cache: false,
+        success: function(html){
+          $("#preview-<%= s.zooniverse_id %>").append(html);
+        }
+      });
+    </script>
   <% end %>
-  <li><a href="/subjects/AMW0002t48">Huge EGO, nice bubble (AMW0002t48)</a></li>
-</ul>
+</div>

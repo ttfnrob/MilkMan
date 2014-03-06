@@ -3,6 +3,8 @@
 <head>
   <title>Milk Man</title>
   <%= stylesheet_link_tag :all %>
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
   <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
 
@@ -36,15 +38,20 @@
 </head>
 <body>
 <h1><a href="/">Milk Man</a></h1>
-<h3>Data delivery for the Milky Way Project.</h3>
 
 <div id="search-buttons">
   <input type="textbox" id="searchID" value="e.g. AMW0002t48" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val('e.g. AMW0002t48');" />
   <button id="searchButton" type="submit">Search</button>
-  <button id="randomButton" type="submit">Random</button>
+  <button id="randomButton" type="submit">Random Image</button>
 </div>
 
 <%= yield %>
+
+<div id="footer">
+  <h3>Data delivery for the Zooniverse's <a href="http://www.milkywayproject.org">Milky Way Project</a></h3>
+  <small>Email rob@zooniverse.org with questions or comments.<br/>Open source and <a href="https://github.com/ttfnrob/MilkMan/" target="_blank">on GitHub</a></small>
+</div>
+
 
 </body>
 </html>
