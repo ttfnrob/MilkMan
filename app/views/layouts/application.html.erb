@@ -37,7 +37,7 @@
 
 </head>
 <body>
-<h1><a href="/">Milk Man</a></h1>
+<h1><a href="/"><%= @pagetitle %></a></h1>
 
 <div id="search-buttons">
   <input type="textbox" id="searchID" value="e.g. AMW0002t48" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val('e.g. AMW0002t48');" />
@@ -49,7 +49,10 @@
 
 <div id="footer">
   <h3>Data delivery for the Zooniverse's <a href="http://www.milkywayproject.org">Milky Way Project</a></h3>
-  <small>Email rob@zooniverse.org with questions or comments.<br/>Open source and <a href="https://github.com/ttfnrob/MilkMan/" target="_blank">on GitHub</a></small>
+  <small>
+  Includes data up to <%= Classification.most_recent.created_at.to_formatted_s(:long_ordinal) %>
+  <br/>
+  Open source and <a href="https://github.com/ttfnrob/MilkMan/" target="_blank">on GitHub</a> &middot; Email rob@zooniverse.org</small>
 </div>
 
 
