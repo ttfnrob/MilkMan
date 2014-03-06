@@ -9,6 +9,7 @@ a{color:#43be8b}
 a:not([href]){opacity:.5;-ms-filter:"alpha(Opacity=50)";filter:alpha(opacity=50)}
 button{background:transparent;border:0;color:inherit;cursor:pointer;font:inherit;margin:0;padding:0;-webkit-transition:opacity .1s;-moz-transition:opacity .1s;-o-transition:opacity .1s;-ms-transition:opacity .1s;transition:opacity .1s}
 button{background:#3c8999;-webkit-border-radius:5px;border-radius:5px;color:#fff;display:inline-block;padding:10px 30px;text-decoration:none;-webkit-transition:background .2s;-moz-transition:background .2s;-o-transition:background .2s;-ms-transition:background .2s;transition:background .2s;vertical-align:middle}
+button:hover{background:#4BBAC5;}
 
 input{background:transparent;border:0;color:inherit;cursor:pointer;font:inherit;margin:0;padding:0;-webkit-transition:opacity .1s;-moz-transition:opacity .1s;-o-transition:opacity .1s;-ms-transition:opacity .1s;transition:opacity .1s}
 input{border: 1px solid #3c8999;-webkit-border-radius:5px;border-radius:5px;display:inline-block;padding:10px 30px 10px 10px;text-decoration:none;-webkit-transition:background .2s;-moz-transition:background .2s;-o-transition:background .2s;-ms-transition:background .2s;transition:background .2s;vertical-align:middle}
