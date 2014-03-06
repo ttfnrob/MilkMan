@@ -36,16 +36,39 @@
       <ul>
           <li><span class="key">Subject</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
           <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>
+          <li><span class="key">Size</span>: <%= @s.metadata["size"] %></li>
       </ul>
   </div>
   <div id="computed-info">
-      <ul>
-          <% @types.each do |k,v| %>
-          <li><span class="key"><%= k %></span>: <%= @results[v]["reduced"].size %> from <%= @results[v].map{|k,a|a.size}.sum %> drawings, <%= @results[v]["signal"].map{|k,a| a.size}.sum %> in clusters</li>
+      <table style="width:300px">
+        <tr>
+          <td>Type</td>
+          <td>GLON</td>
+          <td>GLAT</td>
+          <td>X (px)</td>
+          <td>Y (px)</td>
+          <td>RX</td>
+          <td>RY</td>
+          <td>PA/&deg;</td>
+        </tr>
+        <% @types.each do |k,v| %>
+          <% @results[v]["reduced"].each do |a| %>
+          <% puts a %>
+            <tr>
+              <td> <%= k %></td>
+              <td> <%= sprintf "%.5f", a["glon"] %></td>
+              <td> <%= sprintf "%.5f", a["glat"] %></td>
+              <td> <%= sprintf "%.3f", a["x"] %>&plusmn;<%= sprintf "%.5f", a["quality"]["qx"] %></td>
+              <td> <%= sprintf "%.3f", a["y"] %></td>
+              <td> <%= sprintf "%.2f", a["rx"] %></td>
+              <td> <%= sprintf "%.2f", a["ry"] %></td>
+              <td> <%= sprintf "%.1f", a["angle"] %></td>
+            </tr>
           <% end %>
-        </ul>
-        <ul>
-          <li><span class="key">Volunteers</span>: <%= @s.classification_count %></li>
+        <% end %>
+      </table>
+      <ul>
+        <li><span class="key">Volunteers</span>: <%= @s.classification_count %></li>
       </ul>
   </div>
 </div>

@@ -92,15 +92,19 @@ class Subject
     dbscan.results.each do |k, arr|
       unless k==-1
         output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
+
         avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
         avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
         avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
         avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
         avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
 
+        glat  = self.glat-((avy-200)*self.pixel_scale)
+        glon  = self.glon+((avx-400)*self.pixel_scale)
+
         quality = { "qx"=>stdev(arr.transpose[0]), "qy"=>stdev(arr.transpose[1]), "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]) }
 
-        output["reduced"] << { "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
+        output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
       else
         output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
       end

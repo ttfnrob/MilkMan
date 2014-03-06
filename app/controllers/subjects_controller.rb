@@ -4,7 +4,7 @@ class SubjectsController < ApplicationController
 
   def show
   	@hex = {"bubble" => "#57D6E4", "cluster" => "#D1C056", "ego" => "#4FD84E", "galaxy" => "#D86593", "other" => "#8963DD"}
-    @types = {"Bubbles"=>"bubble", "Clusters"=>"cluster", "EGOs"=>"ego", "Galaxies"=>"galaxy"}
+    @types = {"Bubble"=>"bubble", "Cluster"=>"cluster", "EGO"=>"ego", "Galaxy"=>"galaxy"}
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @pagetitle = "Milkman: #{@s.zooniverse_id}"
     @results = @s.dbscan
