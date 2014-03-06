@@ -1,6 +1,6 @@
 
 class WelcomeController < ApplicationController
   def index
-    @pagetitle = "Milk Man"
+    @pagetitle = "Milkman"
   end
 end

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Milk Man</title>
+  <title>Milknan</title>
   <%= stylesheet_link_tag :all %>
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
@@ -48,11 +48,11 @@
 <%= yield %>
 
 <div id="footer">
-  <h3>Data delivery for the Zooniverse's <a href="http://www.milkywayproject.org">Milky Way Project</a></h3>
+  <h3>Milkman delivers data for the Zooniverse's <a href="http://www.milkywayproject.org">Milky Way Project</a></h3>
   <small>
-  Includes data up to <%= Classification.most_recent.created_at.to_formatted_s(:long_ordinal) %>
+  Includes <%= number_with_delimiter(Classification.size) %> classifications up to <%= Classification.most_recent.created_at.to_formatted_s(:long_ordinal) %>
   <br/>
-  Open source and <a href="https://github.com/ttfnrob/MilkMan/" target="_blank">on GitHub</a> &middot; Email rob@zooniverse.org</small>
+  Milkman is open source and <a href="https://github.com/ttfnrob/MilkMan/" target="_blank">on GitHub</a> &middot; Email rob@zooniverse.org</small>
 </div>
 
 

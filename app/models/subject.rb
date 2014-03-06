@@ -117,6 +117,11 @@ class Subject
     return result
   end
 
+  def self.find_in_range(l,b)
+    r = 0.075
+    Subject.where(:state => "complete", :coords => {:$gt => l-r}).select{|i| i.glon<l+r && i.glat>b-r && i.glat<b+r }
+  end
+
   def self.near(centre)
 
     distance = 0.075
