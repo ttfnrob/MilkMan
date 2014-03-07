@@ -197,10 +197,11 @@ class Subject
   	end
   end
 
-  def simbad_url(radius=self.width*2, top=5000)
+  def simbad_url(radius=self.width*10, top=5000)
     #Define corners of search box
-    eqlow  = gal2equ(self.glon-self.width*2, self.glat-self.width)
-    eqhigh = gal2equ(self.glon+self.width*2, self.glat+self.width)
+    centre = gal2equ(self.glon, self.glat)
+    eqlow  = [centre[0]-self.width*2, centre[1]-self.width]
+    eqhigh = [centre[0]+self.width*2, centre[1]+self.width]
 
     #Build URL
     url_start = "http://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=ADQL&format=JSON&query="
@@ -208,7 +209,7 @@ class Subject
 
   end
 
-  def simbad_gal_list(radius=self.width*2, top=5000)
+  def simbad_gal_list(radius=self.width*10, top=5000)
     data = self.search_simbad(radius, top)
     new_data = []
     data.each do |o|
@@ -220,7 +221,7 @@ class Subject
     return new_data
   end
 
-  def simbad_for_svg(radius=self.width*2, top=10000)
+  def simbad_for_svg(radius=self.width*10, top=5000)
     data = self.search_simbad(radius, top)
     new_data = []
     data.each do |o|
@@ -234,7 +235,7 @@ class Subject
     return new_data
   end
 
-  def search_simbad(radius=self.width*2, top=5000)
+  def search_simbad(radius=self.width*10, top=5000)
 
     get_url=self.simbad_url(radius, top)
     # the_data = Rails.cache.fetch("simbad-#{radius}-#{top}", :expires_in => 6.hours) {
