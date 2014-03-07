@@ -1,0 +1,19 @@
+<% unless @subjects.size > 0 %>
+<h4>No images found within 0.075&deg; of l=<%= params[:lon] %>, b=<%= params[:lat] %>.</h4>
+<% else %>
+<h4><%= @subjects.size %> images within 0.075&deg; of l=<%= params[:lon] %> b=<%= params[:lat] %>:</h4>
+<div id="preview-gallery">
+  <% @subjects.each do |s| %>
+    <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
+    <script type="text/javascript">
+      $.ajax({
+        url: "/subjects/preview/<%= s.zooniverse_id %>",
+        cache: false,
+        success: function(html){
+          $("#preview-<%= s.zooniverse_id %>").append(html);
+        }
+      });
+    </script>
+  <% end %>
+</div>
+<% end %>

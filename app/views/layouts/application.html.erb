@@ -11,7 +11,23 @@
   <script type="text/javascript">
   $( document ).ready(function() {
     function goToSearch(){
-      window.location = ('/subjects/'+$('#searchID').val());
+      q = $('#searchID').val();
+      if (q.indexOf("AMW")>=0 && q.length==10) {
+        console.log("Searching for Zooniverse ID "+q);
+        window.location = ('/subjects/'+$('#searchID').val());
+      } else if (q.split(" ").length==2 && !isNaN(parseFloat(q.split(" ")[0])) && !isNaN(parseFloat(q.split(" ")[1]))) {
+        console.log("Searching for coordinates "+q);
+        window.location = ('/coordinates/?lon='+q.split(" ")[0]+'&lat='+q.split(" ")[1]);
+      }else if (q.split(", ").length==2 && !isNaN(parseFloat(q.split(", ")[0])) && !isNaN(parseFloat(q.split(", ")[1]))) {
+        console.log("Searching for coordinates "+q);
+        window.location = ('/coordinates/?lon='+q.split(", ")[0]+'&lat='+q.split(", ")[1]);
+      } else if (q.split(",").length==2 && !isNaN(parseFloat(q.split(",")[0])) && !isNaN(parseFloat(q.split(",")[1]))) {
+        console.log("Searching for coordinates "+q);
+        window.location = ('/coordinates/?lon='+q.split(",")[0]+'&lat='+q.split(",")[1]);
+      } else {
+        console.log("Cannot indentify "+q);
+        alert("Search query not recognised.");
+      }
     }
 
     $('#randomButton').click(function() {
@@ -40,7 +56,7 @@
 <h1><a href="/"><%= @pagetitle %></a></h1>
 
 <div id="search-buttons">
-  <input type="textbox" id="searchID" value="e.g. AMW0002t48" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val('e.g. AMW0002t48');" />
+  <input type="textbox" id="searchID" value="e.g. 'AMW0002t48' or '351.0 0.70'" onfocus="$('#searchID').val('');" onblur="$('#searchID').filter(function() { return $(this).val() == ''; }).val(\"e.g. 'AMW0002t48' or '351.0 0.70'\");" />
   <button id="searchButton" type="submit">Search</button>
   <button id="randomButton" type="submit">Random Image</button>
 </div>

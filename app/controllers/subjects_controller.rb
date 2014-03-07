@@ -35,4 +35,9 @@ class SubjectsController < ApplicationController
     @types = {"Bubbles"=>"bubble", "Clusters"=>"cluster", "EGOs"=>"ego", "Galaxies"=>"galaxy"}
   end
 
+  def coordinates
+    @pagetitle = "Milkman"
+    @subjects = Subject.find_in_range(params[:lon].to_f, params[:lat].to_f)
+  end
+
 end

@@ -25,6 +25,10 @@ h1, h2, h3 {
   margin: 10px 0 5px 0;
 }
 
+#searchID {
+  width: 230px;
+}
+
 #search-buttons {
     display: inline-block;
     margin: 0 0 10px 0;

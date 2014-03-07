@@ -133,7 +133,7 @@ class Subject
 
   def self.find_in_range(l,b)
     r = 0.075
-    Subject.where(:coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
+    Subject.where(:state => "complete", :coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
   end
 
   def self.near(centre)

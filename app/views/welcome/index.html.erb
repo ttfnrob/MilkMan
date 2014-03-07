@@ -1,6 +1,6 @@
 <h4>Some Examples</h4>
 <div id="preview-gallery">
-  <% Subject.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").where(:cached_annotations.ne => nil).sort(:classification_count.desc).limit(18).each do |s| %>
+  <% @presubjects.each do |s| %>
     <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
     <script type="text/javascript">
       $.ajax({
@@ -12,7 +12,7 @@
       });
     </script>
   <% end %>
-  <% Subject.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").where(:cached_annotations => nil).sort(:classification_count.desc).limit(6).each do |s| %>
+  <% @newsubjects.each do |s| %>
     <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
     <script type="text/javascript">
       $.ajax({
