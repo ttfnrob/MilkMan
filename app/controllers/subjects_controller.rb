@@ -6,7 +6,7 @@ class SubjectsController < ApplicationController
   	@hex = {"bubble" => "#57D6E4", "cluster" => "#D1C056", "ego" => "#4FD84E", "galaxy" => "#D86593", "other" => "#8963DD"}
     @types = {"Bubble"=>"bubble", "Cluster"=>"cluster", "EGO"=>"ego", "Galaxy"=>"galaxy"}
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
-    @pagetitle = "Milkman: #{@s.zooniverse_id}"
+    @pagetitle = "Milkman"
     @results = @s.dbscan
     # @simbad_gal = @s.simbad_gal_list
     # @simbad = @s.simbad_for_svg
