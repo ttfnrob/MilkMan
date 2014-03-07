@@ -36,7 +36,6 @@
       <% end %>
     <% end %>
   </svg>
-
 </div>
 
 <div id="info">
@@ -74,4 +73,27 @@
       </table>
       <div style="clear:both;"></div>
   </div>
+
+  <div id="simbad-<%= @s.zooniverse_id %>" class="simbad-holder"></div>
+  <script type="text/javascript">
+    $.ajax({
+      url: "/subjects/simbad/<%= @s.zooniverse_id %>",
+      cache: false,
+      success: function(html){
+        $("#simbad-<%= @s.zooniverse_id %>").append(html);
+      }
+    });
+  </script>
+
+  <div id="raw-<%= @s.zooniverse_id %>" class="raw-holder"></div>
+  <script type="text/javascript">
+    $.ajax({
+      url: "/subjects/raw/<%= @s.zooniverse_id %>",
+      cache: false,
+      success: function(html){
+        $("#raw-<%= @s.zooniverse_id %>").append(html);
+      }
+    });
+  </script>
+
 </div>

@@ -47,7 +47,6 @@ h1, h2, h3 {
   background: #48E29E;
 }
 
-
 div.preview-holder {
   display: inline-block;
   margin: 0 15px 10px 0;
@@ -111,6 +110,14 @@ div.preview-holder {
     display: inline-block;
     font-size: 0;
     line-height: 0;
+}
+
+.simbad-holder {
+  display: inline-block;
+}
+
+.raw-holder {
+  display: inline-block;
 }
 
 /* TABLE STYLES */

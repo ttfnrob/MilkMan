@@ -220,7 +220,7 @@ class Subject
     return new_data
   end
 
-  def simbad_for_svg(radius=self.width*2, top=5000)
+  def simbad_for_svg(radius=self.width*2, top=10000)
     data = self.search_simbad(radius, top)
     new_data = []
     data.each do |o|

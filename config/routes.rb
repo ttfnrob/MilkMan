@@ -7,6 +7,8 @@ Milkman::Application.routes.draw do
   match 'subjects/:zoo_id' => 'subjects#show'
   match 'coordinates' => 'subjects#coordinates'
   match 'subjects/preview/:zoo_id' => 'subjects#preview'
+  match 'subjects/simbad/:zoo_id' => 'subjects#simbad'
+  match 'subjects/raw/:zoo_id' => 'subjects#raw'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

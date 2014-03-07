@@ -1,0 +1,13 @@
+<% scale = 0.597 %>
+<% width = 800.0*scale %>
+<% height = 400.0*scale %>
+<svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+  <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
+  <% count = 0 %>
+  <% @raw.each do |d| %>
+    <% colour = @hex[d["name"]] %>
+    <ellipse cx="<%= d["center"][0].to_f*scale %>" cy="<%= d["center"][1].to_f*scale %>" rx="<%= d["rx"].to_f*scale %>" ry="<%= d["ry"].to_f*scale %>" fill="#000000" stroke="<%= colour %>" fill-opacity="0" stroke-width="<%= 4*scale %>" tabindex="0" opacity="0.2" transform="rotate(<%= d["angle"] %>, <%= d["center"][0].to_f*scale %>, <%= d["center"][1].to_f*scale %>)" ></ellipse>
+    <% count+=1 %>
+  <% end %>
+  <text fill="#ffffff" stroke="none" font="10px &quot;Arial&quot;" text-anchor="left" y="<%= 384*scale %>" x="<%= 10*scale %>" >Raw Drawings</text>
+</svg>

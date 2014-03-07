@@ -40,4 +40,21 @@ class SubjectsController < ApplicationController
     @subjects = Subject.find_in_range(params[:lon].to_f, params[:lat].to_f)
   end
 
+  def simbad
+    @s = Subject.find_by_zooniverse_id(params[:zoo_id])
+    @pagetitle = "Milkman"
+    @simbad = @s.simbad_for_svg
+    puts @simbad
+    render :layout => false
+  end
+
+  def raw
+    @hex = {"bubble" => "#57D6E4", "cluster" => "#D1C056", "ego" => "#4FD84E", "galaxy" => "#D86593", "other" => "#8963DD"}
+    @types = {"Bubble"=>"bubble", "Cluster"=>"cluster", "EGO"=>"ego", "Galaxy"=>"galaxy"}
+    @s = Subject.find_by_zooniverse_id(params[:zoo_id])
+    @raw = @s.annotations
+    @pagetitle = "Milkman"
+    render :layout => false
+  end
+
 end
