@@ -1,6 +1,14 @@
 <% scale = 1.2 %>
 <% width = 800.0*scale %>
 <% height = 400.0*scale %>
+<div id="catalogue-info">
+    <ul>
+        <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>
+        <li><span class="key">Size</span>: <%= @s.metadata["size"] %></li>
+        <li><span class="key">Volunteers</span>: <%= @s.classification_count %></li>
+        <li><span class="key">Talk</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
+        <span class="stretch"></span></ul>
+</div>
 <div id="maps">
   <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
     <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
@@ -32,13 +40,6 @@
 </div>
 
 <div id="info">
-  <div id="catalogue-info">
-      <ul>
-          <li><span class="key">Subject</span>: <a href="http://talk.milkywayproject.org/#/subjects/<%= @s.zooniverse_id %>" target="_blank"><%= @s.zooniverse_id %></a></li>
-          <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>
-          <li><span class="key">Size</span>: <%= @s.metadata["size"] %></li>
-      </ul>
-  </div>
   <div id="computed-info">
       <table class="scan-results">
         <tr class="table-header">
@@ -61,18 +62,16 @@
               <td> <%= k %></td>
               <td> <%= sprintf "%.4f", a["glon"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglon"] %></td>
               <td> <%= sprintf "%.4f", a["glat"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglat"] %></td>
-              <td> <%= sprintf "%.3f", a["x"] %> &plusmn; <%= sprintf "%.3f", a["quality"]["qx"] %></td>
-              <td> <%= sprintf "%.3f", a["y"] %> &plusmn; <%= sprintf "%.3f", a["quality"]["qy"] %></td>
-              <td> <%= sprintf "%.2f", a["rx"] %></td>
-              <td> <%= sprintf "%.2f", a["ry"] %></td>
+              <td> <%= sprintf "%.1f", a["x"] %> &plusmn; <%= sprintf "%.1f", a["quality"]["qx"] %></td>
+              <td> <%= sprintf "%.1f", a["y"] %> &plusmn; <%= sprintf "%.1f", a["quality"]["qy"] %></td>
+              <td> <%= sprintf "%.1f", a["rx"] %></td>
+              <td> <%= sprintf "%.1f", a["ry"] %></td>
               <td> <%= sprintf "%.1f", a["angle"] %></td>
             </tr>
             <% count+=1 %>
           <% end %>
         <% end %>
       </table>
-      <ul>
-        <li><span class="key">Volunteers</span>: <%= @s.classification_count %></li>
-      </ul>
+      <div style="clear:both;"></div>
   </div>
 </div>

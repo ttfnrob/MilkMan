@@ -13,14 +13,12 @@ a {
 #maps {
   display: inline-block;
   float: left;
-  width: 800px;
   padding: 0 10px 0 0;
 }
 
 #info {
   float: left;
   display: inline-block;
-  width: 400px;
 }
 
 h1, h2, h3 {
@@ -74,9 +72,48 @@ div.preview-holder {
   background-color: #4BBAC5;
 }
 
+#catalogue-info {
+  display: block;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+}
+
+#catalogue-info ul {
+  display: inline-block;
+  list-style: none;
+  width: 960px;
+  background-color: #444444;
+  color: #ffffff;
+  padding: 0;
+  margin: 0;
+  text-align: justify;
+  height: 40px;
+  -ms-text-justify: distribute-all-lines;
+  text-justify: distribute-all-lines;
+}
+
+#catalogue-info ul li {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 auto;
+    *display: inline;
+    zoom: 1;
+}
+
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+}
+
 /* TABLE STYLES */
 table.scan-results {
   width: 960px;
+  border: none;
+  border-spacing: 0;
 }
 
 table.scan-results td{
@@ -102,5 +139,6 @@ tr.even {
   text-transform: uppercase;
   font-size: 14px;
   color: #444;
-  margin: 20px auto 10px;
+/*  margin: 20px auto 10px;*/
+  padding: 20px 0px;
 }
