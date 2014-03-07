@@ -125,6 +125,7 @@ table.scan-results {
   width: 960px;
   border: none;
   border-spacing: 0;
+  margin: 0 0 4px 0;
 }
 
 table.scan-results td{
