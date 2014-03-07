@@ -40,8 +40,8 @@
       </ul>
   </div>
   <div id="computed-info">
-      <table style="width:300px">
-        <tr>
+      <table class="scan-results">
+        <tr class="table-header">
           <td>Type</td>
           <td>GLON</td>
           <td>GLAT</td>
@@ -51,19 +51,23 @@
           <td>RY</td>
           <td>PA/&deg;</td>
         </tr>
+        <% row=0 %>
         <% @types.each do |k,v| %>
+        <% count = 0 %>
           <% @results[v]["reduced"].each do |a| %>
-          <% puts a %>
-            <tr>
+          <% row+=1 %>
+            <tr class="<%= row%2==0 ? "even" : "odd" %>" onmouseover="$('[<%= v %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= v
+              %>=<%= count %>]').css('opacity', '0');">
               <td> <%= k %></td>
-              <td> <%= sprintf "%.5f", a["glon"] %></td>
-              <td> <%= sprintf "%.5f", a["glat"] %></td>
-              <td> <%= sprintf "%.3f", a["x"] %>&plusmn;<%= sprintf "%.5f", a["quality"]["qx"] %></td>
-              <td> <%= sprintf "%.3f", a["y"] %></td>
+              <td> <%= sprintf "%.4f", a["glon"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglon"] %></td>
+              <td> <%= sprintf "%.4f", a["glat"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglat"] %></td>
+              <td> <%= sprintf "%.3f", a["x"] %> &plusmn; <%= sprintf "%.3f", a["quality"]["qx"] %></td>
+              <td> <%= sprintf "%.3f", a["y"] %> &plusmn; <%= sprintf "%.3f", a["quality"]["qy"] %></td>
               <td> <%= sprintf "%.2f", a["rx"] %></td>
               <td> <%= sprintf "%.2f", a["ry"] %></td>
               <td> <%= sprintf "%.1f", a["angle"] %></td>
             </tr>
+            <% count+=1 %>
           <% end %>
         <% end %>
       </table>

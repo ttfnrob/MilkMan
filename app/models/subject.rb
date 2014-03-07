@@ -30,7 +30,11 @@ class Subject
   end
 
   def switched?
-    self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005", "GMW0000006", "GMW0000007"]
+    unless self.group_id.nil?
+      return self.group["zooniverse_id"].in? ["GMW0000003", "GMW0000004", "GMW0000005", "GMW0000006", "GMW0000007"]
+    else
+      return false
+    end
   end
 
   def classifications
@@ -99,10 +103,16 @@ class Subject
         avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
         avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
 
+        qy = stdev(arr.transpose[0])
+        qx = stdev(arr.transpose[1])
+
         glat  = self.glat-((avy-200)*self.pixel_scale)
         glon  = self.glon+((avx-400)*self.pixel_scale)
 
-        quality = { "qx"=>stdev(arr.transpose[0]), "qy"=>stdev(arr.transpose[1]), "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]) }
+        qglat = (qy-200)*self.pixel_scale
+        qglon = (qx-200)*self.pixel_scale
+
+        quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
 
         output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
       else
@@ -123,7 +133,7 @@ class Subject
 
   def self.find_in_range(l,b)
     r = 0.075
-    Subject.where(:state => "complete", :coords => {:$gt => l-r}).select{|i| i.glon<l+r && i.glat>b-r && i.glat<b+r }
+    Subject.where(:coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
   end
 
   def self.near(centre)

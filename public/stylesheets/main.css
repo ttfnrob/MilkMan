@@ -74,6 +74,28 @@ div.preview-holder {
   background-color: #4BBAC5;
 }
 
+/* TABLE STYLES */
+table.scan-results {
+  width: 960px;
+}
+
+table.scan-results td{
+  padding: 5px 5px;
+}
+
+tr.table-header {
+  background-color: #3c8999;
+  color: #fff;
+}
+
+tr.odd {
+  background-color: #ffffff;
+}
+
+tr.even {
+  background-color: #cccccc;
+}
+
 #footer {
   clear: both;
   text-align: center;
