@@ -48,7 +48,7 @@ class Subject
   def annotations
     # cached annotation - sinc eDB is replaced each time these will only cache until next restore
     unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
-        if self["cached_annotations"]
+      if self["cached_annotations"]
         return self["cached_annotations"]
       else
         a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
@@ -81,52 +81,57 @@ class Subject
     self.annotations.select{|a| a if a["name"]==o}
   end
 
-  def dbscan_by_type(o)
+  def dbscan_by_type(o,min_points,epsilon)
     output = { "raw"=>[], "reduced"=>[], "signal"=>{}, "noise"=>[] }
-
-    objects = self.annotations.select{|a| a if a["name"]==o}
-    objects.each do |i|
-      rot = i["angle"].to_f%180
-      rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
-      ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
-      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
-    end
-
-    dbscan = Clusterer.new( output["raw"], {:min_points => 5, :epsilon => 25})
-    dbscan.results.each do |k, arr|
-      unless k==-1
-        output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
-
-        avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
-        avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
-        avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
-        avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
-        avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
-
-        qy = stdev(arr.transpose[0])
-        qx = stdev(arr.transpose[1])
-
-        glat  = self.glat-((avy-200)*self.pixel_scale)
-        glon  = self.glon+((avx-400)*self.pixel_scale)
-
-        qglat = (qy-200)*self.pixel_scale
-        qglon = (qx-200)*self.pixel_scale
-
-        quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
-
-        output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
-      else
-        output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
+    # if self["dbscan_#{min_points}_#{epsilon}"]
+    #   return self["dbscan_#{min_points}_#{epsilon}"]
+    # else
+      objects = self.annotations.select{|a| a if a["name"]==o}
+      objects.each do |i|
+        rot = i["angle"].to_f%180
+        rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
+        ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
+        output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
       end
-    end
-    return output
+
+      dbscan = Clusterer.new( output["raw"], {:min_points => min_points, :epsilon => epsilon})
+      dbscan.results.each do |k, arr|
+        unless k==-1
+          output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
+
+          avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
+          avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
+          avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
+          avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
+          avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
+
+          qy = stdev(arr.transpose[0])
+          qx = stdev(arr.transpose[1])
+
+          glat  = self.glat-((avy-200)*self.pixel_scale)
+          glon  = self.glon+((avx-400)*self.pixel_scale)
+
+          qglat = (qy-200)*self.pixel_scale
+          qglon = (qx-200)*self.pixel_scale
+
+          quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
+
+          output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
+        else
+          output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
+        end
+      end
+    #   self["dbscan_#{min_points}_#{epsilon}"] = output
+    #   self.save
+      return output
+    # end
   end
 
-  def dbscan
+  def dbscan(min_points=5, epsilon=25)
     types = ["bubble", "cluster", "ego", "galaxy"]
     result = {}
     types.each do |o|
-      result[o] = self.dbscan_by_type(o)
+      result[o] = self.dbscan_by_type(o,min_points, epsilon)
     end
     return result
   end

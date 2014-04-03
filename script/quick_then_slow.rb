@@ -5,7 +5,7 @@ CSV.open( Rails.root.to_s+"/data/reduced/quick_slow_output_"+DateTime.now.to_s(:
 tag_writer  << [ "type", "lon", "lat", "rx", "ry", "angle", "qx", "qy", "qrx", "qry", "subject" ]
 
   # Set parameters
-types = ["ego"]
+types = ["ego", "cluster", "galaxy"]
 threshold_fraction = 0.5
 to_process = []
 results = []
@@ -15,7 +15,7 @@ total = Subject.size
 counter = 0
 Subject.each do |s|
   counter+=1
-  puts "Processing subject #{s.zooniverse_id} (#{counter} of #{total})" if counter%100==0 && counter>1
+  puts "Processing subject #{s.zooniverse_id} (#{counter} of #{total})" if counter%5000==0 && counter>1
   types.each do |o|
     to_process << s.zooniverse_id if s.metadata["markings"] && s.object_count(o) > s.classification_count*threshold_fraction && s.classification_count>=10
   end
@@ -27,7 +27,7 @@ counter = 0
 to_process.each do |id|
   s = Subject.find_by_zooniverse_id(id)
   counter+=1
-  puts "Processing subject #{s.zooniverse_id} (#{counter} of #{total})" if counter%100==0 && counter>1
+  puts "Processing subject #{s.zooniverse_id} (#{counter} of #{total})" if counter%500==0 && counter>1
   px = s.pixel_scale
   lat = s.glat
   lon = s.glon
