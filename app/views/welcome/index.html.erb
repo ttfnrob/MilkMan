@@ -1,27 +1,33 @@
 <h4>Some Examples</h4>
 <div id="preview-gallery">
-  <% @presubjects.each do |s| %>
-    <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
-    <script type="text/javascript">
-      $.ajax({
-        url: "/subjects/preview/<%= s.zooniverse_id %>",
-        cache: false,
-        success: function(html){
-          $("#preview-<%= s.zooniverse_id %>").append(html);
-        }
-      });
-    </script>
-  <% end %>
-  <% @newsubjects.each do |s| %>
-    <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
-    <script type="text/javascript">
-      $.ajax({
-        url: "/subjects/preview/<%= s.zooniverse_id %>",
-        cache: false,
-        success: function(html){
-          $("#preview-<%= s.zooniverse_id %>").append(html);
-        }
-      });
-    </script>
+  <% if (@presubjects.size > 0 && @newsubjects.size > 0) %>
+    <% @presubjects.each do |s| %>
+      <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
+      <script type="text/javascript">
+        $.ajax({
+          url: "/subjects/preview/<%= s.zooniverse_id %>",
+          cache: false,
+          success: function(html){
+            $("#preview-<%= s.zooniverse_id %>").append(html);
+          }
+        });
+      </script>
+    <% end %>
+    <% @newsubjects.each do |s| %>
+      <div id="preview-<%= s.zooniverse_id %>" class="preview-holder"></div>
+      <script type="text/javascript">
+        $.ajax({
+          url: "/subjects/preview/<%= s.zooniverse_id %>",
+          cache: false,
+          success: function(html){
+            $("#preview-<%= s.zooniverse_id %>").append(html);
+          }
+        });
+      </script>
+    <% end %>
+  <% else %>
+    <div id="loading-data">
+        <p>Try again in 30 seconds - data is still loading.</p>
+    </div>
   <% end %>
 </div>
