@@ -45,12 +45,6 @@ class Subject
     self.classifications.map{|c|c.user_name}.uniq
   end
 
-  def preload
-    Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(50).each do |i|
-      puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
-    end
-  end
-
   def annotations
     # cached annotation - sinc eDB is replaced each time these will only cache until next restore
     unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
