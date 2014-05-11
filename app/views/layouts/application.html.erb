@@ -31,7 +31,7 @@
     }
 
     $('#randomButton').click(function() {
-      window.location = ('/subjects/<%= Subject.random.zooniverse_id %>');
+      window.location = ('/subjects/<%= Subject.random.nil? ? '#' : Subject.random.zooniverse_id %>');
     });
 
     $('#searchButton').click(function() {
