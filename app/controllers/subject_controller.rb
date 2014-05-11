@@ -25,10 +25,4 @@ class SubjectsController < ApplicationController
     render json: list
   end
 
-  def preload
-    Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(50).each do |i|
-      puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
-    end
-  end
-
 end
