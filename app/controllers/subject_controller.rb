@@ -1,15 +1,15 @@
 class SubjectsController < ApplicationController
-  
+
   def show
     subject = project.named(:subject).where(zooniverse_id: params[:id]).first
-    
+
     if subject
       render json: subject, location: project_subject_path(project.name, subject)
     else
       render json: { }, status: 404
     end
   end
-  
+
   def index
     render json: project.subjects.next_subject(subject_selector_params)
   end
@@ -23,6 +23,12 @@ class SubjectsController < ApplicationController
     Subject.each{|s| puts "#{s.zooniverse_id}, #{s.image}, #{s.glat}, #{s.glon}, #{s.classification_count}, #{s.object_count(o)}, #{s.object_count(o).to_f/s.classification_count.to_f}" if s.metadata["markings"] && s.object_count(o) > s.classification_count*threshold_fraction && s.classification_count>=10}
     list = Subject.each{|s| s.image if s.metadata["markings"] && s.object_count(o) > s.classification_count*threshold_fraction}
     render json: list
+  end
+
+  def preload
+    Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(50).each do |i|
+      puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
+    end
   end
 
 end
