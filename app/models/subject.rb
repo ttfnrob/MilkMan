@@ -5,7 +5,7 @@ class Subject
   include MongoMapper::Document
   include ApplicationHelper
   # many :classifications
-  set_collection_name "milky_way_subjects"
+  set_collection_name "#{Milkman::Application.config.project_slug}_subjects"
 
   key :project_id, ObjectId
   key :workflow_ids, Array
@@ -25,8 +25,8 @@ class Subject
 
   scope :near_to, lambda {|centre| where(:id => {'$in' => Subject.near(centre)}) }
 
-  def self.no_cached_annotations
-    Subject.where(:cached_annotations => nil)
+  def is_tutorial?
+    return self.respond_to?('tutorial') ? TRUE : FALSE
   end
 
   def switched?
@@ -46,34 +46,28 @@ class Subject
   end
 
   def annotations
-    # cached annotation - sinc eDB is replaced each time these will only cache until next restore
-    unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
-      if self["cached_annotations"]
-        return self["cached_annotations"]
-      else
-        a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
-        self["cached_annotations"] = a
-        self.save
-        return a
-      end
+    unless self.is_tutorial? #Exclude tutorial
+      self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
     else
       return {}
     end
   end
 
-  def annotations!
-    unless self.zooniverse_id=="AMW0000v75" #Exclude tutorial
-      a = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
-      self["cached_annotations"] = a
-      self.save
-      return a
-    else
-      return {}
-    end
+  def save_scan(data, type="dbscan")
+    s = ScanResult.create(
+      :zooniverse_id => self.zooniverse_id,
+      :subject_id => self.id,
+      :type => type,
+      :state => self.state,
+      :classification_count => self.classification_count,
+      :annotations => data
+    )
+    puts "Created data for #{self.zooniverse_id}"
+    return s.annotations
   end
 
   def self.random
-    s = Subject.where(:state => "complete").where(:cached_annotations.ne => nil)
+    s = ScanResult.where(:classification_count => {:$gte => 100})
     s.skip(rand(s.size-1)).first
   end
 
@@ -83,57 +77,77 @@ class Subject
 
   def dbscan_by_type(o,min_points,epsilon)
     output = { "raw"=>[], "reduced"=>[], "signal"=>{}, "noise"=>[] }
-    # if self["dbscan_#{min_points}_#{epsilon}"]
-    #   return self["dbscan_#{min_points}_#{epsilon}"]
-    # else
-      objects = self.annotations.select{|a| a if a["name"]==o}
-      objects.each do |i|
-        rot = i["angle"].to_f%180
-        rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
-        ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
-        output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
+    objects = self.annotations.select{|a| a if a["name"]==o}
+    objects.each do |i|
+      rot = i["angle"].to_f%180
+      rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
+      ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
+      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
+    end
+
+    dbscan = Clusterer.new( output["raw"], {:min_points => min_points, :epsilon => epsilon})
+    dbscan.results.each do |k, arr|
+      unless k==-1
+        output["signal"]["#{k}"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
+
+        avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
+        avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
+        avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
+        avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
+        avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
+
+        qy = stdev(arr.transpose[0])
+        qx = stdev(arr.transpose[1])
+
+        glat  = self.glat-((avy-200)*self.pixel_scale)
+        glon  = self.glon+((avx-400)*self.pixel_scale)
+
+        qglat = (qy-200)*self.pixel_scale
+        qglon = (qx-200)*self.pixel_scale
+
+        quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
+
+        output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
+      else
+        output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
       end
+    end
+    return output
+  end
 
-      dbscan = Clusterer.new( output["raw"], {:min_points => min_points, :epsilon => epsilon})
-      dbscan.results.each do |k, arr|
-        unless k==-1
-          output["signal"][k] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => (90.0/5.0)*i[4] } }
-
-          avx   = arr.transpose[0].inject{|sum, el| sum+el }.to_f/arr.size
-          avy   = arr.transpose[1].inject{|sum, el| sum+el }.to_f/arr.size
-          avrx  = arr.transpose[2].inject{|sum, el| sum+el }.to_f/arr.size
-          avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
-          avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
-
-          qy = stdev(arr.transpose[0])
-          qx = stdev(arr.transpose[1])
-
-          glat  = self.glat-((avy-200)*self.pixel_scale)
-          glon  = self.glon+((avx-400)*self.pixel_scale)
-
-          qglat = (qy-200)*self.pixel_scale
-          qglon = (qx-200)*self.pixel_scale
-
-          quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
-
-          output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
-        else
-          output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
-        end
+  def cache_scan_result()
+    res = ScanResult.find_by_zooniverse_id(self.zooniverse_id)
+    if res.nil?
+      puts "Caching result for #{self.zooniverse_id}"
+      return self.dbscan
+    else
+      if (res.created_at < 30.days.ago && res.classification_count == self.classification_count)
+        ScanResult.find_all_by_zooniverse_id(self.zooniverse_id).each{|r|r.delete}
+        return self.dbscan
+        puts "New result saved for #{self.zooniverse_id}"
+      else
+        puts "Result found for #{self.zooniverse_id}"
+        return res.annotations
       end
-    #   self["dbscan_#{min_points}_#{epsilon}"] = output
-    #   self.save
-      return output
-    # end
+    end
   end
 
   def dbscan(min_points=5, epsilon=25)
-    types = ["bubble", "cluster", "ego", "galaxy"]
+    # types = ["bubble", "cluster", "ego", "galaxy"]
+    types = Milkman::Application.config.object_types
     result = {}
     types.each do |o|
       result[o] = self.dbscan_by_type(o,min_points, epsilon)
     end
+    save_scan(result, "dbscan")
     return result
+  end
+
+  def self.cache_results(n=10)
+    completed_ids = ScanResult.all.map{|s|s.zooniverse_id}
+    Subject.where(:state => "complete", :zooniverse_id.nin => completed_ids, :tutorial.ne => true).sort(:classification_count.desc).limit(n).each do |i|
+      puts i.cache_scan_result
+    end
   end
 
   def self.find_in_range(l,b)
@@ -234,7 +248,7 @@ class Subject
       xoff = ( gco[0] - self.glon ) / self.pixel_scale
       yoff = ( gco[1] - self.glat ) / self.pixel_scale
       o["x"] = 400 - xoff
-      o["y"] = 200 + yoff
+      o["y"] = -(200 + yoff)
       new_data << o
     end
     return new_data

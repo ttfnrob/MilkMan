@@ -1,6 +1,9 @@
 <% scale = 0.597 %>
 <% width = 800.0*scale %>
 <% height = 400.0*scale %>
+<% @hex =  Milkman::Application.config.hex %>
+<% @types = Milkman::Application.config.types %>
+
 <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
   <image xlink:href="<%= @s.image %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
   <% count = 0 %>

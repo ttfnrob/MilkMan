@@ -4,11 +4,11 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  database: milky_way
+  database: ouroboros
 
 test:
   <<: *defaults
-  database: milky_way_test
+  database: milkman_test
 
 # set these environment variables on your prod server
 production:

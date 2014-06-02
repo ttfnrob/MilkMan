@@ -1,17 +1,15 @@
 
 class WelcomeController < ApplicationController
   def index
-    @pagetitle = "Milkman"
+    @pagetitle = "Home"
 
-    @presubjects = []
-    @newsubjects = []
-    @presubjects = Subject.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").where(:cached_annotations.ne => nil).sort(:classification_count.desc).limit(12)
-    @newsubjects = Subject.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").where(:cached_annotations => nil).sort(:classification_count.desc).limit(12)
+    # Load 12 most-recently cached subjects
+    @subjects = []
+    @subjects = ScanResult.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").sort(:created_at.desc).limit(12)
 
-    if Subject.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").where(:cached_annotations.ne => nil).size < 50
-      Subject.where(:state => "complete").where(:cached_annotations => nil).sort(:classification_count.desc).limit(6).each do |i|
-        puts "#{i.zooniverse_id}, #{i.classification_count} #{i.annotations.size}"
-      end
+    # Preload 10 more if there are less than 100 preloaded already
+    if ScanResult.where(:state => "complete").where(:zooniverse_id.ne => "AMW0000v75").size < 100
+      Subject.cache_results(n=3)
     end
   end
 end

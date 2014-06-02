@@ -1,6 +1,9 @@
 <% scale = 1.2 %>
 <% width = 800.0*scale %>
 <% height = 400.0*scale %>
+<% @hex =  Milkman::Application.config.hex %>
+<% @types = Milkman::Application.config.types %>
+
 <div id="catalogue-info">
     <ul>
         <li><span class="key">Coords</span>: <%= @s.glon %>, <%= @s.glat %></li>

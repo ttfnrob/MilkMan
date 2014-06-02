@@ -1,7 +1,7 @@
 class Classification
   include MongoMapper::Document
   belongs_to :subject
-  set_collection_name "milky_way_classifications"
+  set_collection_name "#{Milkman::Application.config.project_slug}_classifications"
 
   key :project_id, ObjectId
   key :workflow_id, ObjectId

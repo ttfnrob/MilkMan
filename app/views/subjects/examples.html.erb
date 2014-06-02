@@ -1,5 +1,7 @@
 <% width = 800.0 %>
 <% height = 400.0 %>
+<% @hex =  Milkman::Application.config.hex %>
+<% @types = Milkman::Application.config.types %>
 
 <% @display.each do |id, results| %>
 <% s = Subject.find_by_zooniverse_id(id) %>
