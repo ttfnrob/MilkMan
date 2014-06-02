@@ -1,7 +1,7 @@
 
 class WelcomeController < ApplicationController
   def index
-    @pagetitle = "Home"
+    @pagetitle = "Milkman"
 
     # Load 12 most-recently cached subjects
     @subjects = []

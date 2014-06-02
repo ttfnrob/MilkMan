@@ -96,8 +96,13 @@ class Subject
         avry  = arr.transpose[3].inject{|sum, el| sum+el }.to_f/arr.size
         avrot = arr.transpose[4].inject{|sum, el| sum+el }.to_f/arr.size
 
-        qy = stdev(arr.transpose[0])
-        qx = stdev(arr.transpose[1])
+        qy  = stdev(arr.transpose[0])
+        qx  = stdev(arr.transpose[1])
+        qry = stdev(arr.transpose[3])
+        qrx = stdev(arr.transpose[2])
+
+        qdegy = qry*self.pixel_scale
+        qdegx = qrx*self.pixel_scale
 
         glat  = self.glat-((avy-200)*self.pixel_scale)
         glon  = self.glon+((avx-400)*self.pixel_scale)
@@ -105,9 +110,9 @@ class Subject
         qglat = (qy-200)*self.pixel_scale
         qglon = (qx-200)*self.pixel_scale
 
-        quality = { "qx"=>qx, "qy"=>qy, "qrx"=>stdev(arr.transpose[2]), "qry"=>stdev(arr.transpose[3]), "qglat" => qglat, "qglon" => qglon }
+        quality = { "qx"=>qx, "qy"=>qy, "qrx"=>qrx, "qry"=>qry, "qdegx"=>qdegx, "qdegy"=>qdegy, "qglat" => qglat, "qglon" => qglon }
 
-        output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
+        output["reduced"] << { "glon" => glon, "glat" => glat, "x" => avx, "y" => avy, "rx" => avrx, "degy" => avry*self.pixel_scale, "degx" => avrx*self.pixel_scale, "ry" => avry, "angle" => (90.0/5.0)*avrot, "quality" => quality }
       else
         output["noise"] = arr.map{|i| { "x" => i[0], "y" => i[1], "rx" => i[2], "ry" => i[3], "angle" => i[4] } }
       end
