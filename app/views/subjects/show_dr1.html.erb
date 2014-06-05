@@ -70,7 +70,7 @@
             <td> <%= sprintf "%.1f", w %></td>
             <td> <%= sprintf "%.1f", h %></td>
             <td> <%= sprintf "%.1f", a.angle %></td>
-            <td> <%= sprintf "%.2f", a.hit %></td>
+            <td> <%= sprintf "%.2f", a.hit_rate %></td>
             <%- else -%>
             <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a.glon %></td>
@@ -80,7 +80,7 @@
             <td> <%= sprintf "%.1f", w %></td>
             <td> <%= sprintf "%.1f", h %></td>
             <td></td>
-            <td> <%= sprintf "%.2f", a.hit %></td>
+            <td> <%= sprintf "%.2f", a.hit_rate %></td>
             <%- end -%>
           </tr>
           <% count+=1 %>
