@@ -48,6 +48,7 @@
           <td>RX</td>
           <td>RY</td>
           <td>PA/&deg;</td>
+          <td>Hit Rate</td>
         </tr>
         <% row=0 %>
         <% count = 0 %>
@@ -69,6 +70,7 @@
             <td> <%= sprintf "%.1f", w %></td>
             <td> <%= sprintf "%.1f", h %></td>
             <td> <%= sprintf "%.1f", a.angle %></td>
+            <td> <%= sprintf "%.2f", a.hit %></td>
             <%- else -%>
             <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a.glon %></td>
@@ -78,6 +80,7 @@
             <td> <%= sprintf "%.1f", w %></td>
             <td> <%= sprintf "%.1f", h %></td>
             <td></td>
+            <td> <%= sprintf "%.2f", a.hit %></td>
             <%- end -%>
           </tr>
           <% count+=1 %>

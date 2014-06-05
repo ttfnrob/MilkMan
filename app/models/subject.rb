@@ -14,7 +14,7 @@ class Subject
 
   key :location, Hash
   key :classification_count, Integer
-  key :coords, Array, :index => true
+  key :coords, Array
 
   key :metadata, Hash
   key :size, String
