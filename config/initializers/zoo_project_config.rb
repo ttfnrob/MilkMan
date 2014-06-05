@@ -12,11 +12,13 @@ Milkman::Application.config.hex = {				"bubble" => "#57D6E4",
 												"cluster" => "#D1C056",
 												"ego" => "#4FD84E",
 												"galaxy" => "#D86593",
-												"other" => "#8963DD"
+												"other" => "#8963DD",
+												"small-bubble" => "#B894E3"
 									}
 
 Milkman::Application.config.types = {			"Bubble"=>"bubble",
 												"Cluster"=>"cluster",
 												"EGO"=>"ego",
-												"Galaxy"=>"galaxy"
+												"Galaxy"=>"galaxy",
+												"Small Bubble"=>"small-bubble"
 									}

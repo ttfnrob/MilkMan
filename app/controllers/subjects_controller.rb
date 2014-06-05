@@ -5,9 +5,16 @@ class SubjectsController < ApplicationController
   def show
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @pagetitle = "Milkman"
-    @results = @s.cache_scan_result
-    @simbad_gal = @s.simbad_gal_list
-    @simbad = @s.simbad_for_svg
+    
+    if @s.dr1 == true
+      @results = CatalogueObject.where(:glon => {:$gt => @s.glon-(@s.width/2.0), :$lt => @s.glon+(@s.width/2.0)}, :glat => {:$gt => @s.glat-(@s.height/2.0), :$lt => @s.glat+(@s.height/2.0)})
+      render "subjects/show_dr1"
+    else
+      @results = @s.cache_scan_result
+      @simbad_gal = @s.simbad_gal_list
+      @simbad = @s.simbad_for_svg
+      render "subjects/show"
+    end
   end
 
   def preview

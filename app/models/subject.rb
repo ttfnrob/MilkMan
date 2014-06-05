@@ -198,11 +198,21 @@ class Subject
   end
 
   def width
-  	self.metadata["size"].split(/x/)[0].to_f
+  	if self.state == "legacy"
+      s = self.location["standard"]
+      s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[0].to_f
+    else
+      self.metadata["size"].split(/x/)[0].to_f
+    end
   end
 
   def height
-  	self.metadata["size"].split(/x/)[1].to_f
+  	if self.state == "legacy"
+      s = self.location["standard"]
+      s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[1].to_f
+    else
+      self.metadata["size"].split(/x/)[1].to_f
+    end
   end
 
   def pixel_scale
@@ -214,6 +224,14 @@ class Subject
 
   def image
     self.location["standard"]
+  end
+
+  def dr1
+    if (self.state=="legacy" && self.location["standard"].index("th/"))
+      return true
+    else
+      return false
+    end
   end
 
   def object_count(o)

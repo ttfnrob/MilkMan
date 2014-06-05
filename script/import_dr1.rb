@@ -18,6 +18,7 @@ large.each do |o|
 	  :degx => o[4].to_f/60.0,
 	  :degy => o[5].to_f/60.0,
 	  :thickness => o[8].to_f/60.0,
+	  :dispersion => o[12].to_f,
 	  :angle => o[10].to_f,
 	  :catalogue_name => "DR1",
 	  :cat_id => o[0]
