@@ -61,7 +61,7 @@
           <tr class="<%= row%2==0 ? "even" : "odd" %>" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type
             %>=<%= count %>]').css('opacity', '0.5');">
             <%- if type=="bubble" -%>
-            <td> <%= @types.index(type) %></td>
+            <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a.glon %> &plusmn; <%= sprintf "%.4f", a.dispersion %></td>
             <td> <%= sprintf "%.4f", a.glat %> &plusmn; <%= sprintf "%.4f", a.dispersion %></td>
             <td> <%= sprintf "%.1f", x %></td>
@@ -70,7 +70,7 @@
             <td> <%= sprintf "%.1f", h %></td>
             <td> <%= sprintf "%.1f", a.angle %></td>
             <%- else -%>
-            <td> <%= @types.index(type) %></td>
+            <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a.glon %></td>
             <td> <%= sprintf "%.4f", a.glat %></td>
             <td> <%= sprintf "%.1f", x %></td>

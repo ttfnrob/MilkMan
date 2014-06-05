@@ -56,7 +56,7 @@
         <% row+=1 %>
           <tr class="<%= row%2==0 ? "even" : "odd" %>" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type
             %>=<%= count %>]').css('opacity', '0');">
-            <td> <%= @types.index(type) %></td>
+            <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a["glon"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglon"] %></td>
             <td> <%= sprintf "%.4f", a["glat"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglat"] %></td>
             <td> <%= sprintf "%.1f", a["x"] %> &plusmn; <%= sprintf "%.1f", a["quality"]["qx"] %></td>
