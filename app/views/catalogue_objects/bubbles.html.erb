@@ -5,7 +5,7 @@
 <h4>Bubbles</h4>
 <div id="preview-gallery">
 <% @bubbles.each do |b| %>
-  <div class="object-preview" glon="<%= b["glon"] %>" glat="<%= b["glat"] %>">
+  <div class="object-preview">
     <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
     <image xlink:href="<%= b.img_url %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
 

@@ -55,8 +55,9 @@ output.each do |k,v|
 	end
 end
 
-# Clear out current DB table of results
-CatalogueObject.delete_all
+# Clear out current DB table of DR2 results
+CatalogueObject.find_all_by_catalogue_name("DR2").each{|co| co.delete}
+
 # Write to CSV file and to DB
 CSV.open("milkman-output-#{o}.csv", 'w') do |csv_object|
   csv_object << ["type", "glon", "glat", "degx", "degy", "imgx", "imgy", "rx", "ry", "angle", "qglon", "gqlat", "qdegx", "qdegy", "potential_duplicate", "pixel_scale", "zooniverse_id", "img_url", "cat_id"]
@@ -70,7 +71,7 @@ CSV.open("milkman-output-#{o}.csv", 'w') do |csv_object|
   		pm = o["glat"]<0 ? "-" : "+"
   		plon = sprintf '%.3f', o["glon"] # Because .round() doesn't to trailing zeros
   		plat = sprintf '%.3f', o["glat"]
-  		cat_id = "MWP2"+plon.to_s.sub(/\./, '').rjust(6, "0") + pm + plat.to_s.sub(/\./, '').sub(/\-/, '').rjust(6, "0")+k[0].capitalize
+  		cat_id = "MWP2G"+plon.to_s.sub(/\./, '').rjust(6, "0") + pm + plat.to_s.sub(/\./, '').sub(/\-/, '').rjust(6, "0")+k[0].capitalize
 
 	    # Add to CSV file
 	    csv_object << [ k, abslon, o["glat"], o["degx"], o["degy"], o["x"], o["y"], o["rx"], o["ry"], o["angle"], o["quality"]["qglon"], o["quality"]["qglat"], o["quality"]["gdegx"], o["quality"]["qdegy"], this_dup, o["pixel_scale"], o["zooniverse_id"], o["image_url"], cat_id ]
