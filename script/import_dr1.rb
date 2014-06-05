@@ -1,8 +1,8 @@
 require "csv"
 
-large = CSV.read('data/legacy/dr1-large.tsv', { :col_sep => "\t" })
+large = CSV.read('app/data/legacy/dr1-large.tsv', { :col_sep => "\t" })
 large.shift
-small = CSV.read('data/legacy/dr1-small.tsv', { :col_sep => "\t" })
+small = CSV.read('app/data/legacy/dr1-small.tsv', { :col_sep => "\t" })
 small.shift
 puts "Files read from data/legacy"
 
