@@ -23,6 +23,9 @@ ScanResult.all.each do |r|
 			if drawtype==o || o=="all" #only process what is needed
 				if datatype=="reduced" #only use reduced data
 					objects.each do |o|
+						o["zooniverse_id"] = r["zooniverse_id"]
+						o["image_url"] = Subject.find_by_zooniverse_id(r["zooniverse_id"]).image
+						o["pixel_scale"] = Subject.find_by_zooniverse_id(r["zooniverse_id"]).pixel_scale
 						if o["glon"] >= lons[0] && o["glon"] <= lons[1] && o["glat"] >= lats[0] && o["glat"] <= lats[1] # only save data in spatial range
 							defined?(output[drawtype].first) ? output[drawtype] << o : output[drawtype] = [o]
 						end
@@ -50,16 +53,51 @@ output.each do |k,v|
 			end
 		end
 	end
-	# PP.pp found_dups if found_dups.size>0
 end
 
+# Clear out current DB table of results
+CatalogueObject.delete_all
+# Write to CSV file and to DB
 CSV.open("milkman-output-#{o}.csv", 'w') do |csv_object|
-  csv_object << ["type", "glon", "glat", "degx", "degy", "angle", "qglon", "glat", "qdegx", "qdegy", "potential_duplicate"]
+  csv_object << ["type", "glon", "glat", "degx", "degy", "imgx", "imgy", "rx", "ry", "angle", "qglon", "gqlat", "qdegx", "qdegy", "potential_duplicate", "pixel_scale", "zooniverse_id", "img_url", "cat_id"]
   output.each do |k,list|
   	puts k
-  	list.each do |v|
-  		this_dup = v["potential_duplicate"] || false
-	    csv_object << [ k, v["glon"], v["glat"], v["degx"], v["degy"], v["angle"], v["quality"]["qglon"], v["quality"]["qglat"], v["quality"]["gdegx"], v["quality"]["qdegy"], this_dup ]
+  	list.each do |o|
+  		
+  		# Create specific/custom catalogue entries
+  		this_dup = o["potential_duplicate"] || false
+  		abslon = o["glon"]>180 ? o["glon"]-360 : o["glon"]
+  		pm = o["glat"]<0 ? "-" : "+"
+  		plon = sprintf '%.3f', o["glon"] # Because .round() doesn't to trailing zeros
+  		plat = sprintf '%.3f', o["glat"]
+  		cat_id = "MWP2"+plon.to_s.sub(/\./, '').rjust(6, "0") + pm + plat.to_s.sub(/\./, '').sub(/\-/, '').rjust(6, "0")+k[0].capitalize
+
+	    # Add to CSV file
+	    csv_object << [ k, abslon, o["glat"], o["degx"], o["degy"], o["x"], o["y"], o["rx"], o["ry"], o["angle"], o["quality"]["qglon"], o["quality"]["qglat"], o["quality"]["gdegx"], o["quality"]["qdegy"], this_dup, o["pixel_scale"], o["zooniverse_id"], o["image_url"], cat_id ]
+	    
+	    # Add to DB
+	    CatalogueObject.create(
+	    	  :type => k,
+			  :glon => abslon,
+			  :glat => o["glat"],
+			  :degx => o["degx"],
+			  :degy => o["degy"],
+			  :imgx => o["x"],
+			  :imgy => o["y"],
+			  :rx => o["rx"],
+			  :ry => o["ry"],
+			  :angle => o["angle"],
+			  :qglon => o["quality"]["qglon"],
+			  :gqlat => o["quality"]["qglat"],
+			  :qdegx => o["quality"]["gdegx"],
+			  :qdegy => o["quality"]["qdegy"],
+			  :potential_duplicate => this_dup,
+			  :pixel_scale => o["pixel_scale"],
+			  :zooniverse_id => o["zooniverse_id"],
+			  :img_url => o["image_url"],
+			  :catalogue_name => "DR2",
+			  :cat_id => cat_id
+	    )
 	end
   end
 end

@@ -14,9 +14,7 @@ class Classification
   scope :for_subject, lambda {|zid| where(:subject_ids => [Subject.find_by_zooniverse_id(zid).id]) }
 
   def self.most_recent
-    # Rails.cache.fetch("most-recent-c", :expires_in => 6.hours) {
       Classification.sort(:created_at.desc).first
-    # }
   end
 
   def subject

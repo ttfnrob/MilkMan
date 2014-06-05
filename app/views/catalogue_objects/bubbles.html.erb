@@ -1,0 +1,16 @@
+<% scale = 0.36 %>
+<% width = 800.0*scale %>
+<% height = 400.0*scale %>
+
+<h4>Bubbles</h4>
+<div id="preview-gallery">
+<% @bubbles.each do |b| %>
+  <div class="object-preview" glon="<%= b["glon"] %>" glat="<%= b["glat"] %>">
+    <svg height="<%= height %>" version="1.1" width="<%= width %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 <%= width %> <%= height %>" preserveAspectRatio="xMinYMin" style="overflow: hidden; position: relative;">
+    <image xlink:href="<%= b.img_url %>" preserveAspectRatio="xMidYMid meet" width="<%= width %>" height="<%= height %>"/>
+
+    <ellipse cx="<%= b["imgx"]*scale %>" cy="<%= b["imgy"]*scale %>" rx="<%= b["rx"]*scale %>" ry="<%= b["ry"]*scale %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4*scale" tabindex="0" opacity="0.5" transform="rotate(<%= b["angle"] %>, <%= b["imgx"]*scale %>, <%= b["imgy"]*scale %>)" ></ellipse>
+    </svg>
+  </div>
+<% end %>
+</div>

@@ -9,6 +9,8 @@ Milkman::Application.routes.draw do
   match 'subjects/simbad/:zoo_id' => 'subjects#simbad'
   match 'subjects/raw/:zoo_id' => 'subjects#raw'
 
+  match 'catalogues/dr2/bubbles' => 'catalogue_objects#bubbles'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

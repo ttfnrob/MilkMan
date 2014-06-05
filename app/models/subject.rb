@@ -105,10 +105,10 @@ class Subject
         qdegx = qrx*self.pixel_scale
 
         glat  = self.glat-((avy-200)*self.pixel_scale)
-        glon  = self.glon+((avx-400)*self.pixel_scale)
+        glon  = self.glon-((avx-400)*self.pixel_scale)
 
-        qglat = (qy-200)*self.pixel_scale
-        qglon = (qx-200)*self.pixel_scale
+        qglat = qy*self.pixel_scale.abs
+        qglon = qx*self.pixel_scale.abs
 
         quality = { "qx"=>qx, "qy"=>qy, "qrx"=>qrx, "qry"=>qry, "qdegx"=>qdegx, "qdegy"=>qdegy, "qglat" => qglat, "qglon" => qglon }
 
@@ -151,7 +151,7 @@ class Subject
   def self.cache_results(n=10)
     completed_ids = ScanResult.all.map{|s|s.zooniverse_id}
     Subject.where(:state => "complete", :zooniverse_id.nin => completed_ids, :tutorial.ne => true).sort(:classification_count.desc).limit(n).each do |i|
-      puts i.cache_scan_result
+      i.cache_scan_result
     end
   end
 
@@ -175,6 +175,17 @@ class Subject
 
     subjects.values.sort!
     return subjects.select {|k, v| v < distance}.keys
+
+  end
+
+  def self.cache_near(l,b,r)
+
+    completed_ids = ScanResult.all.map{|s|s.zooniverse_id}
+    set = Subject.where(:state => "complete", :zooniverse_id.nin => completed_ids, :tutorial.ne => true, :coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
+    puts "Found #{set.size} subjects"
+    set.each do |i|
+      i.cache_scan_result
+    end
 
   end
 
