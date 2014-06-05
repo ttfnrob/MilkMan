@@ -157,7 +157,7 @@ class Subject
 
   def self.find_in_range(l,b)
     r = 0.075
-    Subject.where(:state => "complete", :coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
+    Subject.where(:$or => [{:state => "complete"}, {:state => "legacy"}], :coords => {:$elemMatch => {:$gt => l-r, :$lt => l+r}}).select{|i| i.glat>b-r && i.glat<b+r }
   end
 
   def self.near(centre)
@@ -200,7 +200,11 @@ class Subject
   def width
   	if self.state == "legacy"
       s = self.location["standard"]
-      s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[0].to_f
+      if s.index('bubble_centred')
+        s[s.index('mosaic_')+7..s.index('_I24M1.jpg')-1].split('x')[0].to_f
+      else
+        s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[0].to_f
+      end
     else
       self.metadata["size"].split(/x/)[0].to_f
     end
@@ -209,7 +213,11 @@ class Subject
   def height
   	if self.state == "legacy"
       s = self.location["standard"]
-      s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[1].to_f
+      if s.index('bubble_centred')
+        s[s.index('mosaic_')+7..s.index('_I24M1.jpg')-1].split('x')[1].to_f
+      else
+        s[s.index('h/')+2..s.index('_jpgs')-1].split('x')[1].to_f
+      end
     else
       self.metadata["size"].split(/x/)[1].to_f
     end
@@ -219,7 +227,7 @@ class Subject
   	xs = self.width.to_f/800.0
   	ys = self.height.to_f/400.0
 
-  	return xs==ys ? xs : "scale conflict"
+  	return xs.round(5)==ys.round(5) ? xs : "scale conflict"
   end
 
   def image
@@ -227,7 +235,7 @@ class Subject
   end
 
   def dr1
-    if (self.state=="legacy" && self.location["standard"].index("th/"))
+    if (self.state=="legacy" && ( self.location["standard"].index("th/") || self.location["standard"].index("bubble_centred") ))
       return true
     else
       return false

@@ -21,14 +21,15 @@
       <%- type = d["type"] -%>
       <%- x = (@s.glon-d.glon)/@s.pixel_scale + 400 -%>
       <%- y = (@s.glat-d.glat)/@s.pixel_scale + 200 -%>
-      <%- w = d.degx/@s.pixel_scale -%>
-      <%- h = d.degy/@s.pixel_scale -%>
-      <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= w*scale %>" ry="<%= h*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d.angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
-      <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= w*scale %>" ry="<%= h*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d.angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
+      <%- w = d.degx/@s.pixel_scale/2.0 -%>
+      <%- h = d.degy/@s.pixel_scale/2.0 -%>
+      <%- angle = d.angle ? d.angle-90 : 0 -%>
+      <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= w*scale %>" ry="<%= h*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
+      <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= w*scale %>" ry="<%= h*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
       <%- if type=="bubble" -%>
          <%- t = d.thickness/@s.pixel_scale -%>
-        <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= (w+t)*scale %>" ry="<%= (h+t)*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d.angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
-        <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= (w+t)*scale %>" ry="<%= (h+t)*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d.angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
+        <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= (w+t)*scale %>" ry="<%= (h+t)*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
+        <ellipse cx="<%= x*scale %>" cy="<%= y*scale %>" rx="<%= (w+t)*scale %>" ry="<%= (h+t)*scale %>" <%= type %>="<%= count %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= angle %>, <%= x*scale %>, <%= y*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '1.0');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" ></ellipse>
       <%- end -%>
       <% count+=1 %>
     <% end %>
