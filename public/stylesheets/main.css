@@ -121,20 +121,22 @@ div.preview-holder {
 }
 
 /* TABLE STYLES */
-table.scan-results {
+table.scan-results, table.dc-chart {
   width: 960px;
   border: none;
   border-spacing: 0;
   margin: 0 0 4px 0;
 }
 
-table.scan-results td{
+td, th{
   padding: 5px 5px;
 }
 
-tr.table-header {
+tr.table-header, tr.header {
   background-color: #3c8999;
   color: #fff;
+  font-weight: normal;
+  text-align: left;
 }
 
 tr.odd {
