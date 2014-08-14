@@ -139,7 +139,7 @@ d3.csv("/milkman-output-all.csv", function (data) {
   dc.dataCount(".dc-data-count")
     .dimension(facts)
     .group(all);
-   
+
   // GLON Bar Graph Summed
   glonChart.width(960)
     .height(180)
@@ -226,7 +226,7 @@ d3.csv("/milkman-output-all.csv", function (data) {
 	    name["false"] =  "F";
 	    return name[d.potential_duplicate];
       },
-      function(d) { return "<a href='re.milkywayproject.org/subjects/"+d.zooniverse_id+"' target='_blank'>"+d.zooniverse_id+"</a>"; },
+      function(d) { return "<a href='http://explore.milkywayproject.org/subjects/"+d.zooniverse_id+"' target='_blank'>"+d.zooniverse_id+"</a>"; },
       function(d) { return d.cat_id; }
     ])
     .sortBy(function(d){ return d.cat_id; })
