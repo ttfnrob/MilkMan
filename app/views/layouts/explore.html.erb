@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Milkman</title>
-    <%= stylesheet_link_tag "main" %>
-  <%= stylesheet_link_tag "mwp-styles" %>
+  <title>Milkman: Explore</title>
+
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-  <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag "jquery" %>
-  <%= javascript_include_tag "jquery_ujs" %>
+  
+  <%= stylesheet_link_tag "main" %>
+  <%= stylesheet_link_tag "mwp-styles" %>
+  <%= stylesheet_link_tag "dc.css" %>
+
+  <%= javascript_include_tag "bootstrap.min.js" %>
+  <%= javascript_include_tag "jquery.1.9.1.min.js" %>
+  <%= javascript_include_tag "d3.js" %>
+  <%= javascript_include_tag "crossfilter.js" %>
+  <%= javascript_include_tag "dc.js" %>
+
+  <%= javascript_include_tag :defaults %>
+
   <%= csrf_meta_tag %>
 
   <script type="text/javascript">

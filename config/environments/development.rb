@@ -7,6 +7,8 @@ Milkman::Application.configure do
   config.cache_classes = true
   # config.action_controller.perform_caching = true
 
+  config.assets.enabled = true
+
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 

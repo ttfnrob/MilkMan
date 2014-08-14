@@ -1,4 +1,6 @@
 Milkman::Application.routes.draw do
+  get "explore/index"
+
   root :to => "welcome#index"
 
   get "subjects/index"

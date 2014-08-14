@@ -1,0 +1,158 @@
+body {
+
+}
+
+a {
+  text-decoration: none;
+}
+
+#simbad-objects {
+  display: none;
+}
+
+#maps {
+  display: inline-block;
+  float: left;
+  padding: 0 10px 0 0;
+}
+
+#info {
+  float: left;
+  display: inline-block;
+}
+
+h1, h2, h3 {
+  margin: 10px 0 5px 0;
+}
+
+#searchID {
+  width: 230px;
+}
+
+#search-buttons {
+    display: inline-block;
+    margin: 0 0 10px 0;
+}
+
+
+#search-buttons button {
+    display: inline-block;
+}
+
+#randomButton {
+  background: #43be8b;
+}
+
+#randomButton:hover {
+  background: #48E29E;
+}
+
+div.preview-holder {
+  display: inline-block;
+  margin: 0 15px 10px 0;
+  position: relative;
+}
+
+.preview-link {
+  position: absolute;
+  top: 50%;
+  margin: -16px 0 0 0px;
+  right: -16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  border: 2px solid white;
+  text-decoration: none;
+  line-height: 30px;
+  text-align: center;
+  font-size: 18px;
+  background-color: #3c8999;
+  color: #ffffff;
+  -webkit-transition:background .2s;-moz-transition:background .2s;-o-transition:background .2s;-ms-transition:background .2s;transition:background .2s;
+}
+
+.preview-link:hover{
+  background-color: #4BBAC5;
+}
+
+#catalogue-info {
+  display: block;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+}
+
+#catalogue-info ul {
+  display: inline-block;
+  list-style: none;
+  width: 960px;
+  background-color: #444444;
+  color: #ffffff;
+  padding: 0;
+  margin: 0;
+  text-align: justify;
+  height: 40px;
+  -ms-text-justify: distribute-all-lines;
+  text-justify: distribute-all-lines;
+}
+
+#catalogue-info ul li {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 auto;
+    *display: inline;
+    zoom: 1;
+}
+
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+}
+
+.simbad-holder {
+  display: inline-block;
+}
+
+.raw-holder {
+  display: inline-block;
+}
+
+/* TABLE STYLES */
+table.scan-results, table.dc-chart {
+  width: 960px;
+  border: none;
+  border-spacing: 0;
+  margin: 0 0 4px 0;
+}
+
+td, th{
+  padding: 5px 5px;
+}
+
+tr.table-header, tr.header {
+  background-color: #3c8999;
+  color: #fff;
+  font-weight: normal;
+  text-align: left;
+}
+
+tr.odd {
+  background-color: #ffffff;
+}
+
+tr.even {
+  background-color: #cccccc;
+}
+
+#footer {
+  clear: both;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #444;
+/*  margin: 20px auto 10px;*/
+  padding: 20px 0px;
+}

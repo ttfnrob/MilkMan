@@ -1,0 +1,243 @@
+
+<div class='container' id='main-container'>
+<div class='content'>
+<div class='container'>
+
+	
+	<p>Although we are still collecting classifications on the <a href="http://www.milkywayproject.org">Milky Way Project</a>, we have had more than one million already! This is enough to begin to see what the final catalogue of crowdsourced objects might look like, and to map and explore some properties.</p>
+
+	<p>This page is a chance to do just that. It uses a combination of D3.js, Crossfilter and DC to produce a interactive data visualation.</p>
+
+	<row>
+		<div class="dc-data-count">
+		<span>
+        	<span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+     	</span>
+	     </div>
+	</row>
+
+	<div class='row'>
+    	<div class='pie-graph span12' id='dc-glon-chart'>
+    		<h4>Objects by GLON</h4>
+    	</div>
+ 	</div>
+
+  <div class='row'>
+    <div class='span12'>
+      <div class='row'>
+        <div class='span6' id='dc-glat-chart'>
+	      <h4>Object by GLAT</h4>
+        </div>  
+		<div class='span3' id='dc-dupe-chart'>
+      		<h4>Potential Duplicate</h4>
+    	</div>  
+        <div class='span3' id='dc-type-chart'>
+      		<h4>Object Types</h4>
+    	</div>  
+      </div>
+    </div>
+  </div>
+
+  <p style="clear:both; width:960px;">Sample of objects in this group:</p>
+
+  <div class='row'>
+	<div class='pie-graph span12'>
+      <table class='table table-hover' id='dc-table-graph' style="clear:both;">
+        <thead>
+          <tr class='header'>
+            <th>Type</th>
+            <th>GLON</th>
+            <th>GLAT</th>
+            <th>Width (")</th>
+            <th>Height (")</th>
+            <th>PA (&deg;)</th>
+            <th>Duplicate</th>
+            <th>Zooniverse ID</th>
+            <th>Catalogue ID</th>
+          </tr>
+        </thead>
+      </table>
+	</div>
+  </div>
+
+</div>
+</div>
+</div>
+  
+<script>
+
+// load data from a csv file
+d3.csv("/milkman-output-all.csv", function (data) {
+
+  // format our data
+  var dtgFormat = d3.time.format("%Y-%m-%dT%H:%M:%S");
+  
+  data.forEach(function(d) { 
+    d.glon = d3.round(+d.glon,3);
+    d.glat = d3.round(+d.glat,4);
+    d.degx = d3.round(+d.degx,5);
+    d.degy = d3.round(+d.degy,5);
+    d.angle = d3.round(+d.angle,0);;
+  });
+
+/******************************************************
+* Step1: Create the dc.js chart objects & ling to div *
+******************************************************/
+
+  var glonChart = dc.barChart("#dc-glon-chart");
+  var glatChart = dc.barChart("#dc-glat-chart");
+  var typeChart = dc.rowChart("#dc-type-chart");
+  var dupeChart = dc.pieChart("#dc-dupe-chart");
+  var dataTable = dc.dataTable("#dc-table-graph");
+
+  var facts = crossfilter(data);  // Gets our 'facts' into crossfilter
+  var all = facts.groupAll();
+
+  // for GLON
+  var glonValue = facts.dimension(function (d) {
+    return d3.round(d.glon,0);       
+  });
+  var glonValueGroup = glonValue.group();
+
+  // for GLAT
+  var glatValue = facts.dimension(function (d) {
+    return d3.round(d.glat*2,0)/2;
+  });
+  var glatValueGroup = glatValue.group();
+  
+  // For type chart
+  var typeValue = facts.dimension(function (d) {
+    var type = d.type;
+    var name={};
+    name["bubble"] = "Bubble";
+    name["cluster"] =  "Cluster";
+    name["ego"] =  "EGO";
+    name["galaxy"]=  "Galaxy";
+    return type+"."+name[type];
+  });
+  var typeValueGroup = typeValue.group();
+
+  // For dupe chart
+  var dupValue = facts.dimension(function (d) {
+    var dupe = d.potential_duplicate;
+    var name={};
+    name["true"] = "Yes";
+    name["false"] =  "No";
+    return dupe+"."+name[dupe];
+  });
+  var dupValueGroup = dupValue.group();
+
+  // For datatable
+  var tableDimension = facts.dimension(function (d) {
+    return d.glon;
+  }); 
+
+/***************************************
+* 	Step4: Create the Visualisations   *
+***************************************/
+    // count all the facts
+  dc.dataCount(".dc-data-count")
+    .dimension(facts)
+    .group(all);
+   
+  // GLON Bar Graph Summed
+  glonChart.width(960)
+    .height(180)
+    .margins({top: 10, right: 10, bottom: 20, left: 40})
+    .dimension(glonValue)								// the values across the x axis
+    .group(glonValueGroup)							// the values on the y axis
+	.transitionDuration(200)
+    .centerBar(true)	
+	.gap(0)                                            // bar width Keep increasing to get right then back off.
+    .x(d3.scale.linear().domain([-180, 180]))
+	.elasticY(true)
+	.xAxis().tickFormat(function(v) {return v;});	
+
+  // GLAT bar graph
+  glatChart.width(480)
+    .height(180)
+    .margins({top: 10, right: 20, bottom: 20, left: 40})
+    .dimension(glatValue)
+    .group(glatValueGroup)
+	.transitionDuration(200)
+    .centerBar(true)	
+	.gap(0)                    // bar width Keep increasing to get right then back off.
+    .x(d3.scale.linear().domain([-3, 3]))
+    .elasticY(true)
+	.xAxis().tickFormat(function(v) {return v;});
+
+  typeChart.width(280)
+	.height(180)
+	.margins({top: 20, left: 10, right: 10, bottom: 20})
+	.group(typeValueGroup)
+	.dimension(typeValue)
+	.colors(["#57d6e4", "#d1c056", "#4fd84e", "#993c64"])
+	.label(function (d) {
+	    return d.key.split(".")[1];
+	})
+	.title(function (d) {
+	    return d.value;
+	})
+	.elasticX(true)
+	.xAxis().ticks(4);
+
+	dupeChart.width(200)
+	    .height(160)
+	    .radius(80) // define pie radius
+	    .dimension(dupValue) // set dimension
+	    .group(dupValueGroup) // set group
+	    .label(function (d) {
+	        if (dupeChart.hasFilter() && !dupeChart.hasFilter(d.data.key.split(".")[1]))
+	            return d.data.key.split(".")[1] + " (0%)";
+	        var label = d.data.key.split(".")[1];
+	        if(all.value())
+	            label += " (" + Math.floor(d.value / all.value() * 100) + "%)";
+	        return label;
+	    })
+	    .renderLabel(true)
+	    .innerRadius(40)
+	    .transitionDuration(200)
+	    .colors(['#3c8999', '#FF744D'])
+
+  // Table of earthquake data
+  dataTable.width(960)
+  	.height(800)
+    .dimension(tableDimension)
+	.group(function(d) { return ""
+	 })
+	.size(25)							// number of rows to return
+    .columns([
+      function(d) { 
+      	var name={};
+	    name["bubble"] = "Bubble";
+	    name["cluster"] =  "Cluster";
+	    name["ego"] =  "EGO";
+	    name["galaxy"]=  "Galaxy";
+    	return name[d.type];
+      },
+      function(d) { return d.glon; },
+      function(d) { return d.glat; },
+      function(d) { return d3.round(d.degx*60*60,2); },
+      function(d) { return d3.round(d.degy*60*60,2); },
+      function(d) { return d.angle; },
+      function(d) {
+      	var name={};
+	    name["true"] = "T";
+	    name["false"] =  "F";
+	    return name[d.potential_duplicate];
+      },
+      function(d) { return "<a href='re.milkywayproject.org/subjects/"+d.zooniverse_id+"' target='_blank'>"+d.zooniverse_id+"</a>"; },
+      function(d) { return d.cat_id; }
+    ])
+    .sortBy(function(d){ return d.cat_id; })
+    .order(d3.ascending);
+
+/****************************
+* Step6: Render the Charts  *
+****************************/
+			
+  dc.renderAll();
+  
+});
+  
+</script>

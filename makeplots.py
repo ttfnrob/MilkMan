@@ -17,12 +17,12 @@ gals = dataset[dataset['type']=='galaxy']
 
 ts = time.time()
 stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
-directory = "output/charts/"
+directory = "public/images/charts/"
 if not os.path.exists(directory):
 	os.makedirs(directory)
 
-charts = [	['glon', 36, 'linear',[180,-180], 'GLON'],
-			['glat', 20, 'linear',[-2.5,2.5], "GLAT"],
+charts = [	['glon', 36, 'linear',[-65,-105], 'GLON'],
+			['glat', 20, 'linear',[-2.5,2.0], "GLAT"],
 			['degx', 20, 'log', [0,0.1], 'Width (deg)'],
 			['degy', 20, 'log', [0,0.1], 'Height (deg)'],
 			['angle', 20, 'linear', [0,90], 'Angle (deg)'],
@@ -34,7 +34,7 @@ charts = [	['glon', 36, 'linear',[180,-180], 'GLON'],
 		 ]
 
 for prop in charts:
-	fig = plt.figure()
+	fig = plt.figure(figsize=(16,9))
 	ax1 = fig.add_subplot(111)
 	# ax1.xlim(prop[3])
 	ax1.set_yscale(prop[2])
@@ -42,23 +42,6 @@ for prop in charts:
 	n, bins, patches = ax1.hist( [bubbles[prop[0]], clusters[prop[0]], egos[prop[0]], gals[prop[0]] ], bins=prop[1], color=['CornflowerBlue', 'GoldenRod', 'YellowGreen', 'Crimson'], histtype='step')
 	# plt.savefig(directory+prop[0]+"_"+stamp+".png", dpi=300, bbox_inches='tight')
 	plt.figtext(0.89, 0.92, 'Distribution of '+prop[4], fontdict=None, ha='right')
-	plt.savefig(directory+prop[0]+".png", dpi=300, bbox_inches='tight')
+	plt.savefig(directory+prop[0]+".png", dpi=600, bbox_inches='tight')
 	plt.close()
 
-## Create 'canvas' for map
-fig = pl.figure(figsize=(10, 4))
-ax = fig.add_subplot(111, aspect='equal')
-ax.set_xlim(-64,-82)
-ax.set_ylim(-1.6, 0.5)
-
-#Map data
-for b in bubbles:
-    e = Ellipse(xy=[b[1], b[2]], width=b[3]*2, height=b[4]*2, angle=b[9])
-    e.set_clip_box(ax.bbox)
-    e.set_alpha(0.25)
-    e.set_facecolor('CornflowerBlue')
-    e.set_edgecolor('CornflowerBlue')
-    ax.add_artist(e)
-
-pl.savefig(directory+"bubble-map.png", dpi=300, bbox_inches='tight')
-pl.close()

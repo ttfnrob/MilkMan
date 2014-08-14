@@ -59,7 +59,7 @@ end
 CatalogueObject.find_all_by_catalogue_name("DR2").each{|co| co.delete}
 
 # Write to CSV file and to DB
-CSV.open("milkman-output-#{o}.csv", 'w') do |csv_object|
+CSV.open("public/milkman-output-#{o}.csv", 'w') do |csv_object|
   csv_object << ["type", "glon", "glat", "degx", "degy", "imgx", "imgy", "rx", "ry", "angle", "qglon", "gqlat", "qdegx", "qdegy", "potential_duplicate", "pixel_scale", "zooniverse_id", "img_url", "cat_id"]
   output.each do |k,list|
   	puts k
