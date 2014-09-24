@@ -12,6 +12,8 @@ gem "rugged"
 gem "dbscan"
 gem "k_means"
 
+gem "fastimage"
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
