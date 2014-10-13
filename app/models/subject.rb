@@ -146,7 +146,7 @@ class Subject
     end
   end
 
-  def dbscan(min_points=5, epsilon=20)
+  def dbscan(min_points=5, epsilon=25)
     # types = ["bubble", "cluster", "ego", "galaxy"]
     types = Milkman::Application.config.object_types
     result = {}
