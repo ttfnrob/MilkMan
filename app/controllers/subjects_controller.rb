@@ -34,7 +34,7 @@ class SubjectsController < ApplicationController
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @pagetitle = "Milkman"
     @simbad = @s.simbad_for_svg
-    puts @simbad
+    # puts @simbad
     render :layout => false
   end
 

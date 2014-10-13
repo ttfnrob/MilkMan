@@ -47,7 +47,9 @@ class Subject
 
   def annotations
     unless self.is_tutorial? #Exclude tutorial
-      self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+      primary = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["center"]}
+      secondary = self.classifications.map{|c|c.annotations}.flatten.select{|i|i["content"]}
+      return primary+secondary
     else
       return {}
     end
@@ -67,22 +69,29 @@ class Subject
   end
 
   def self.random
-    s = ScanResult.where(:classification_count => {:$gte => 100})
+    s = ScanResult.where(:classification_count => {:$gte => 50})
     s.skip(rand(s.size-1)).first
   end
 
   def annotations_by_type(o="ego")
-    self.annotations.select{|a| a if a["name"]==o}
+    self.annotations.select{|a| a if a["name"]==o || a["content"]==o}
   end
 
   def dbscan_by_type(o,min_points,epsilon)
     output = { "raw"=>[], "reduced"=>[], "signal"=>{}, "noise"=>[] }
-    objects = self.annotations.select{|a| a if a["name"]==o}
+    objects = self.annotations.select{|a| a if a["name"]==o || a["content"]==o}
     objects.each do |i|
-      rot = i["angle"].to_f%180
-      rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
-      ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
-      output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
+      if i.has_key? "center"
+        rot = i["angle"].to_f%180
+        rx = rot>90 ? i["ry"].to_f : i["rx"].to_f
+        ry = rot>90 ? i["rx"].to_f : i["ry"].to_f
+        output["raw"] << [i["center"][0].to_f, i["center"][1].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
+      else 
+        rot = 0
+        rx = i["width"].to_f
+        ry = i["height"].to_f
+        output["raw"] << [i["left"].to_f, i["top"].to_f, rx, ry, 0 ]
+      end
     end
 
     dbscan = Clusterer.new( output["raw"], {:min_points => min_points, :epsilon => epsilon})
@@ -131,13 +140,13 @@ class Subject
         return self.dbscan
         puts "New result saved for #{self.zooniverse_id}"
       else
-        puts "Result found for #{self.zooniverse_id}"
+        # puts "Result found for #{self.zooniverse_id}"
         return res.annotations
       end
     end
   end
 
-  def dbscan(min_points=5, epsilon=25)
+  def dbscan(min_points=5, epsilon=20)
     # types = ["bubble", "cluster", "ego", "galaxy"]
     types = Milkman::Application.config.object_types
     result = {}
@@ -150,8 +159,11 @@ class Subject
 
   def self.cache_results(n=10)
     completed_ids = ScanResult.all.map{|s|s.zooniverse_id}
+    k=0
     Subject.where(:state => "complete", :zooniverse_id.nin => completed_ids, :tutorial.ne => true).sort(:classification_count.desc).limit(n).each do |i|
       i.cache_scan_result
+      k+=1
+      puts "#{k}/#{n}"
     end
   end
 

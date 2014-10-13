@@ -71,7 +71,8 @@ CSV.open("public/milkman-output-#{o}.csv", 'w') do |csv_object|
   		pm = o["glat"]<0 ? "-" : "+"
   		plon = sprintf '%.3f', o["glon"] # Because .round() doesn't to trailing zeros
   		plat = sprintf '%.3f', o["glat"]
-  		cat_id = "MWP2G"+plon.to_s.sub(/\./, '').rjust(6, "0") + pm + plat.to_s.sub(/\./, '').sub(/\-/, '').rjust(6, "0")+k[0].capitalize
+  		sup = k=='bowshock' ? k[0].capitalize+'W' : k[0].capitalize
+  		cat_id = "MWP2G"+plon.to_s.sub(/\./, '').rjust(6, "0") + pm + plat.to_s.sub(/\./, '').sub(/\-/, '').rjust(6, "0")+sup
 
 	    # Add to CSV file
 	    csv_object << [ k, abslon, o["glat"], o["degx"], o["degy"], o["x"], o["y"], o["rx"], o["ry"], o["angle"], o["quality"]["qglon"], o["quality"]["qglat"], o["quality"]["gdegx"], o["quality"]["qdegy"], this_dup, o["pixel_scale"], o["zooniverse_id"], o["image_url"], cat_id ]

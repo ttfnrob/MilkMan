@@ -20,7 +20,11 @@
     <% @results.each do |type,res| %>
       <% res["signal"].each do |k,arr| %>
         <% arr.each do |d| %>
-          <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0"  transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)"></ellipse>
+          <%- if ["bubble", "cluster", "ego", "galaxy"].include? type -%>
+            <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0"  transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)"></ellipse>
+          <%- else -%>
+            <rect x="<%= (d["x"].to_f)*scale %>" y="<%= (d["y"].to_f)*scale %>" width="<%= (d["rx"].to_f)*scale %>" height="<%= (d["ry"].to_f)*scale %>" <%= type %>="<%= k %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="2" tabindex="0" opacity="0"  />
+          <%- end -%>
         <% end %>
       <% end %>
     <% end %>
@@ -28,8 +32,13 @@
     <% @results.each do |type,res| %>
       <% count = 0 %>
       <% res["reduced"].each do |d| %>
-        <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
-        <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+        <%- if ["bubble", "cluster", "ego", "galaxy"].include? type -%>
+          <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+          <ellipse cx="<%= d["x"]*scale %>" cy="<%= d["y"]*scale %>" rx="<%= d["rx"]*scale %>" ry="<%= d["ry"]*scale %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" transform="rotate(<%= d["angle"] %>, <%= d["x"]*scale %>, <%= d["y"]*scale %>)" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" ></ellipse>
+        <%- else -%>
+          <rect x="<%= (d["x"].to_f)*scale %>" y="<%= (d["y"].to_f)*scale %>" width="<%= (d["rx"].to_f)*scale %>" height="<%= (d["ry"].to_f)*scale %>" fill="#000000" stroke="white" fill-opacity="0" stroke-width="4" tabindex="0" opacity="0.5" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" />
+          <rect x="<%= (d["x"].to_f)*scale %>" y="<%= (d["y"].to_f)*scale %>" width="<%= (d["rx"].to_f)*scale %>" height="<%= (d["ry"].to_f)*scale %>" fill="#000000" stroke="<%= @hex[type] %>" fill-opacity="0" stroke-width="2" tabindex="0" opacity="1.0" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');" />
+        <%- end -%>
         <% count+=1 %>
       <% end %>
     <% end %>
@@ -50,12 +59,11 @@
           <td>PA/&deg;</td>
         </tr>
         <% row=0 %>
-        <% count = 0 %>
-         <% @results.each do |type,res| %>
+        <% @results.each do |type,res| %>
+        <% count=0 %>
         <% res["reduced"].each do |a| %>
-        <% row+=1 %>
-          <tr class="<%= row%2==0 ? "even" : "odd" %>" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type
-            %>=<%= count %>]').css('opacity', '0');">
+          <% row+=1 %>
+          <tr class="<%= row%2==0 ? "even" : "odd" %>" onmouseover="$('[<%= type %>=<%= count %>]').css('opacity', '0.5');" onmouseout="$('[<%= type %>=<%= count %>]').css('opacity', '0');">
             <td> <%= @types.key(type) %></td>
             <td> <%= sprintf "%.4f", a["glon"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglon"] %></td>
             <td> <%= sprintf "%.4f", a["glat"] %> &plusmn; <%= sprintf "%.4f", a["quality"]["qglat"] %></td>

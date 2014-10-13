@@ -6,7 +6,7 @@
 	
 	<p>Although we are still collecting classifications on the <a href="http://www.milkywayproject.org">Milky Way Project</a>, we have had more than one million already! This is enough to begin to see what the final catalogue of crowdsourced objects might look like, and to map and explore some properties.</p>
 
-	<p>This page is a chance to do just that. It uses a combination of D3.js, Crossfilter and DC to produce a interactive data visualation.</p>
+	<p>This page is a chance to do just that. It uses D3.js and Crossfilter to produce an interactive data visualation.</p>
 
 	<row>
 		<div class="dc-data-count">
@@ -113,6 +113,8 @@ d3.csv("/milkman-output-all.csv", function (data) {
     name["cluster"] =  "Cluster";
     name["ego"] =  "EGO";
     name["galaxy"]=  "Galaxy";
+    name["bowshock"]=  "Bow Shock";
+    name["pillars"]=  "Pillars";
     return type+"."+name[type];
   });
   var typeValueGroup = typeValue.group();
@@ -171,7 +173,7 @@ d3.csv("/milkman-output-all.csv", function (data) {
 	.margins({top: 20, left: 10, right: 10, bottom: 20})
 	.group(typeValueGroup)
 	.dimension(typeValue)
-	.colors(["#57d6e4", "#d1c056", "#4fd84e", "#993c64"])
+	.colors(["#F6FF00", "#57d6e4", "#d1c056", "#4fd84e", "#993c64", "#D4B5FF"])
 	.label(function (d) {
 	    return d.key.split(".")[1];
 	})
@@ -208,11 +210,13 @@ d3.csv("/milkman-output-all.csv", function (data) {
 	.size(25)							// number of rows to return
     .columns([
       function(d) { 
-      	var name={};
+      var name={};
 	    name["bubble"] = "Bubble";
-	    name["cluster"] =  "Cluster";
-	    name["ego"] =  "EGO";
-	    name["galaxy"]=  "Galaxy";
+	    name["cluster"] = "Cluster";
+	    name["ego"] = "EGO";
+	    name["galaxy"] = "Galaxy";
+      name["bowshock"] = "Bow Shock";
+      name["pillars"] = "Pillars";
     	return name[d.type];
       },
       function(d) { return d.glon; },
