@@ -130,7 +130,7 @@ class Subject
   end
 
   def cache_scan_result()
-    res = ScanResult.find_by_zooniverse_id(self.zooniverse_id)
+    res = ScanResult.first(:zooniverse_id => self.zooniverse_id)
     if res.nil?
       puts "Caching result for #{self.zooniverse_id}"
       return self.dbscan
