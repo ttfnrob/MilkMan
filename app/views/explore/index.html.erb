@@ -54,6 +54,7 @@
             <th>Duplicate</th>
             <th>Zooniverse ID</th>
             <th>Catalogue ID</th>
+            <th>Thumbnail</th>
           </tr>
         </thead>
       </table>
@@ -207,7 +208,7 @@ d3.csv("/milkman-output-all.csv", function (data) {
     .dimension(tableDimension)
 	.group(function(d) { return ""
 	 })
-	.size(25)							// number of rows to return
+	.size(30)							// number of rows to return
     .columns([
       function(d) { 
       var name={};
@@ -231,7 +232,17 @@ d3.csv("/milkman-output-all.csv", function (data) {
 	    return name[d.potential_duplicate];
       },
       function(d) { return "<a href='http://explore.milkywayproject.org/subjects/"+d.zooniverse_id+"' target='_blank'>"+d.zooniverse_id+"</a>"; },
-      function(d) { return d.cat_id; }
+      function(d) { return d.cat_id; },
+      function(d) {
+        var scale = 1.0;
+        scalex = 100.0/(d.rx*3.0);
+        scaley = 100.0/(d.ry*3.0);
+        if (scalex>scaley) {
+          scale = scalex;
+        } else {
+          scale = scaley;
+        }
+        return "<a class='thumb-link' style='display:block;height:100px;width:100px;overflow:hidden;position:relative' href='http://explore.milkywayproject.org/subjects/"+d.zooniverse_id+"' target='_blank'><img src='"+d.img_url+"' style='position:absolute;top:-"+(d.imgy-(d.ry*2.0))*scale+"px;left:-"+(d.imgx-(d.rx*2.0))*scale+"px' width='"+(800.0*scale)+"px' /></a>"; }
     ])
     .sortBy(function(d){ return d.cat_id; })
     .order(d3.ascending);
