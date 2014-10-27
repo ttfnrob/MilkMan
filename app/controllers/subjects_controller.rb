@@ -6,13 +6,7 @@ class SubjectsController < ApplicationController
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @pagetitle = Milkman::Application.config.project_name
     
-    if @s.dr1 == true
-      @results = CatalogueObject.where(:glon => {:$gt => @s.glon-(@s.width/2.0), :$lt => @s.glon+(@s.width/2.0)}, :glat => {:$gt => @s.glat-(@s.height/2.0), :$lt => @s.glat+(@s.height/2.0)})
-      render "subjects/show_dr1"
-    else
-      @results = @s.cache_scan_result
-      render "subjects/show"
-    end
+    @results = @s.cache_scan_result
   end
 
   def preview
