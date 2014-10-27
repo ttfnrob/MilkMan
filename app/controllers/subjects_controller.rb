@@ -5,8 +5,8 @@ class SubjectsController < ApplicationController
   def show
     @s = Subject.find_by_zooniverse_id(params[:zoo_id])
     @pagetitle = Milkman::Application.config.project_name
-    
     @results = @s.cache_scan_result
+    render "subjects/show"
   end
 
   def preview
