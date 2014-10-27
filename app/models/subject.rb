@@ -93,17 +93,17 @@ class Subject
     objects.each do |i|
       
       if o=="fan"
-        rot = i["angle"].to_f%180
+        rot = i["angle"].to_f%360
         rx = i["distance"].to_f
         ry = i.has_key?("version") ? i["spread"] : real_spread(i["spread"])
-        output["raw"] << [i["source"]["x"].to_f, i["source"]["y"].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]   
+        output["raw"] << [i["source"]["x"].to_f, i["source"]["y"].to_f, rx, ry, (5.0/90.0)*(rot) ]   
       end
 
       if o=="blotch"    
         rot = i["angle"].to_f%180
         rx = rot>90 ? i["radius2"].to_f : i["radius1"].to_f
         ry = rot>90 ? i["radius1"].to_f : i["radius2"].to_f
-        output["raw"] << [i["center"]["x"].to_f, i["center"]["y"].to_f, rx, ry, (5.0/90.0)*(rot%90.0) ]
+        output["raw"] << [i["center"]["x"].to_f, i["center"]["y"].to_f, rx, ry, (5.0/90.0)*(rot) ]
       end
 
     end
